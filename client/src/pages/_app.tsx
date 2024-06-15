@@ -1,4 +1,4 @@
-// import '../styles/globals.css'
+import '../styles/globals.css'
 import Axios from "axios";
 import type { AppProps } from "next/app";
 
