@@ -1,5 +1,6 @@
-import { createContext, useContext, useReducer } from "react";
+import { createContext, useContext, useEffect, useReducer } from "react";
 import { User } from "../types";
+import axios from "axios";
 
 interface State {
     authenticated: boolean;
@@ -51,12 +52,24 @@ export const AuthProvider = ({ children }:{ children: React.ReactNode }) => {
         loading: true,
     })
 
-    console.log('state', state);
-
     const dispatch = (type: string, payload?: any) => {
         defaultDispatch({ type, payload });
     }
 
+    useEffect(() => {
+        async function loadUser() {
+            try {
+                const res = await axios.get("/auth/me");
+                dispatch("LOGIN", res.data); // 백엔드에서 오는 유저 정보를 LOGIN에 넣어줌
+            } catch (error) {
+                console.log(error);
+            } finally {
+                dispatch("STOP_LOADING");
+            }
+        }
+        loadUser(); // 컴포넌트가 마운트 되자마자 함수 호출
+    }, [])
+    
     return (
         <DispatchContext.Provider value={dispatch}>
             <StateContext.Provider value={state}>{children}</StateContext.Provider>
