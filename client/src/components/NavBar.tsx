@@ -1,8 +1,21 @@
 import Link from "next/link"
-import { useAuthState } from "../context/auth";
+import { useAuthDispatch, useAuthState } from "../context/auth";
+import axios from "axios";
 
 const NavBar: React.FC = () => {
   const { loading, authenticated } = useAuthState();
+  const dispatch = useAuthDispatch();
+
+  const handleLogOut = () => {
+    axios.post("/auth/logout")
+      .then(() => {
+        dispatch("LOGOUT"); // Context에 들어있는 User 정보 Update
+        window.location.reload(); // Page Refresh
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+  }
 
   return (
     <div className="fixed inset-x-0 top-0 z-10 flex items-center justify-between h-16 px-5 bg-white">
@@ -25,6 +38,7 @@ const NavBar: React.FC = () => {
           (authenticated ? (
             <button
               className="w-20 p-2 mr-2 text-center text-white bg-gray-400 rounded"
+              onClick={handleLogOut}
             >
               Logout
             </button>
