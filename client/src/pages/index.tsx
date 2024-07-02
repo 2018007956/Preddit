@@ -2,6 +2,7 @@ import Link from "next/link"
 import useSWR from "swr";
 import { Sub } from "../types";
 import axios from "axios";
+import Image from "next/image";
 
 export default function Home() {
 
@@ -23,7 +24,33 @@ export default function Home() {
           </div>
 
           {/* 커뮤니티 리스트 */}
-          <div></div>
+          <div>
+            {topSubs?.map((sub) => (
+              <div
+                key={sub.name}
+                className="flex items-center px-4 py-2 text-xs border-b"
+              >
+                <Link href={`/r/${sub.name}`}>
+                  <span>
+                    <Image
+                      src={sub.imageUrl}
+                      className="rounded-full cursor-pointer"
+                      alt="Sub"
+                      width={24}
+                      height={24}
+                    />
+                  </span>
+                </Link>
+                <Link href={`/r/${sub.name}`}>
+                  <span className='ml-2 font-bold hover:cursor-pointer'>
+                    /r/{sub.name}
+                  </span>
+                </Link>
+                <p className='ml-auto font-md'>{sub.postCount}</p>
+              </div>
+            ))}
+          </div>
+            
           <div className='w-full py-6 text-center'>
             <Link href="/subs/create">
               <span className='w-full p-2 text-center text-white bg-gray-400 rounded'>
