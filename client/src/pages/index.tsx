@@ -3,9 +3,10 @@ import useSWR from "swr";
 import { Sub } from "../types";
 import axios from "axios";
 import Image from "next/image";
+import { useAuthState } from "../context/auth";
 
 export default function Home() {
-
+  const { authenticated } = useAuthState();
   const fetcher = async (url: string) =>
     await axios.get(url).then(res => res.data);
   const address = "http://localhost:4000/api/subs/sub/topSubs";
@@ -50,15 +51,16 @@ export default function Home() {
               </div>
             ))}
           </div>
-            
-          <div className='w-full py-6 text-center'>
-            <Link href="/subs/create">
-              <span className='w-full p-2 text-center text-white bg-gray-400 rounded'>
-                커뮤니티 만들기
-              </span>
-            </Link>
-          </div>
           
+          {authenticated &&
+            <div className='w-full py-6 text-center'>
+              <Link href="/subs/create">
+                <span className='w-full p-2 text-center text-white bg-gray-400 rounded'>
+                  커뮤니티 만들기
+                </span>
+              </Link>
+            </div>
+          }
         </div>
       </div>
 
