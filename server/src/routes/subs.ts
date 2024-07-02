@@ -1,10 +1,8 @@
 import { Request, Response, Router } from "express";
-import jwt from "jsonwebtoken";
 import User from "../entities/User";
 import userMiddleware from "../middlewares/user";
 import authMiddleware from "../middlewares/auth";
 import { isEmpty } from "class-validator";
-import { getRepository } from "typeorm";
 import Sub from "../entities/Sub";
 import { AppDataSource } from "../data-source";
 import Post from "../entities/Post";
@@ -17,10 +15,10 @@ const createSub = async (req: Request, res: Response) => {
         if(isEmpty(name)) errors.name = "이름은 비워둘 수 없습니다.";
         if(isEmpty(title)) errors.title = "제목은 비워둘 수 없습니다.";
         
-        const sub = await getRepository(Sub)    // select data in db using QueryBuilder
+        const sub = await AppDataSource.getRepository(Sub)    // select data in db using QueryBuilder
             .createQueryBuilder("sub")
             .where("lower(sub.name) = :name", { name: name.toLowerCase() })
-            .getOne()
+            .getOne();
 
         if(sub) errors.name = "서브가 이미 존재합니다.";
 
