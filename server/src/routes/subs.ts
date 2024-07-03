@@ -71,7 +71,8 @@ const createSub = async (req: Request, res: Response) => {
 
 const topSubs = async (_: Request, res: Response) => {
     try {
-        const imageUrlExp = `COALESCE(s."imageUrn", 'https://www.gravatar.com/avatar?d=mp&f=y')`;
+        const imageUrlExp = `COALESCE('${process.env.APP_URL}/images/' || s."imageUrn", 
+                                        'https://www.gravatar.com/avatar?d=mp&f=y')`;
         const subs = await AppDataSource
             .createQueryBuilder()
             .select(`s.title, s.name, ${imageUrlExp} as "imageUrl", count(p.id) as "postCount"`)
