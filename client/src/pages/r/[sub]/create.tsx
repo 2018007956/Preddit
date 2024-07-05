@@ -1,3 +1,5 @@
+import axios from 'axios'
+import { GetServerSideProps } from 'next'
 import React from 'react'
 
 const PostCreate = () => {
@@ -41,3 +43,17 @@ const PostCreate = () => {
 }
 
 export default PostCreate
+
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+    try {
+        const cookie = req.headers.cookie;
+        if (!cookie) throw new Error("쿠키가 없습니다.");
+
+        await axios.get("/auth/me", { headers: { cookie } });
+
+        return { props: {} };
+    } catch (error) {
+        res.writeHead(307, { Location: "/login" }).end();
+        return { props: {} };
+    }
+}
