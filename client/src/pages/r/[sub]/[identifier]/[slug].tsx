@@ -1,14 +1,17 @@
+import { useAuthState } from '@/src/context/auth';
 import { Post } from '@/src/types';
 import axios from 'axios';
 import dayjs from 'dayjs';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useState } from 'react';
 import useSWR from 'swr';
 
 const PostPage = () => {
     const router = useRouter();
     const { sub, identifier, slug } = router.query;
-
+    const { authenticated, user } = useAuthState();
+    const [newComment, setNewComment] = useState("");
     const { data: post, error } = useSWR<Post>(
         identifier && slug ? `/posts/${identifier}/${slug}` : null
     )
@@ -46,6 +49,52 @@ const PostPage = () => {
                                             </span>
                                         </button>
                                     </div>
+                                </div>
+                            </div>
+                            <div>
+                                {/* 댓글 작성 구간 */}
+                                <div className="pr-6 mb-4 pl-9">
+                                    {authenticated ?
+                                        (<div>
+                                            <p className="mb-1 text-xs">
+                                                <Link href={`/u/${user?.username}`}>
+                                                    <span className="font-semibold text-blue-500">
+                                                        {user?.username}
+                                                    </span>
+                                                </Link>
+                                                {" "}으로 댓글 작성
+                                            </p>
+                                            <form>
+                                                <textarea
+                                                    className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-gray-600"
+                                                    onChange={e => setNewComment(e.target.value)}
+                                                    value={newComment}
+                                                >
+                                                </textarea>
+                                                <div className="flex justify-end">
+                                                    <button
+                                                        className="px-3 py-1 text-white bg-gray-400 rounded"
+                                                        disabled={newComment.trim() === ""}
+                                                    >
+                                                        댓글 작성
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>)
+                                        :
+                                        (<div className="flex items-center justify-between px-2 py-4 border border-gray-200 rounded">
+                                            <p className="font-semibold text-gray-400">
+                                                댓글 작성을 위해서 로그인 해주세요.
+                                            </p>
+                                            <div>
+                                                <Link href={`/login`}>
+                                                    <span className="px-3 py-1 text-white bg-gray-400 rounded">
+                                                        로그인
+                                                    </span>
+                                                </Link>
+                                            </div>
+                                        </div>)
+                                    }
                                 </div>
                             </div>
                         </>
