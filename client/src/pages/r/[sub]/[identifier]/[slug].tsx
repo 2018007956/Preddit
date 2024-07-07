@@ -4,7 +4,7 @@ import axios from 'axios';
 import dayjs from 'dayjs';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { FormEvent, useState } from 'react';
 import useSWR from 'swr';
 
 const PostPage = () => {
@@ -15,6 +15,18 @@ const PostPage = () => {
     const { data: post, error } = useSWR<Post>(
         identifier && slug ? `/posts/${identifier}/${slug}` : null
     )
+    const handleSubmit = async (e: FormEvent) => {
+        e.preventDefault();
+        if (newComment.trim() === "") return;
+        try {
+            await axios.post(`/posts/${post?.identifier}/${post?.slug}/comments`, {
+                body: newComment,
+            });
+            setNewComment("");
+        } catch (error) {
+            console.log(error);
+        }
+    }
     return (
         <div className="flex max-w-5xl px-4 pt-5 mx-auto">
             {/* Post */}
@@ -64,7 +76,7 @@ const PostPage = () => {
                                                 </Link>
                                                 {" "}으로 댓글 작성
                                             </p>
-                                            <form>
+                                            <form onSubmit={handleSubmit}>
                                                 <textarea
                                                     className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-gray-600"
                                                     onChange={e => setNewComment(e.target.value)}
