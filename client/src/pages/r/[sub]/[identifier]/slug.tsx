@@ -7,17 +7,8 @@ const PostPage = () => {
     const router = useRouter();
     const { sub, identifier, slug } = router.query;
 
-    const fetcher = async (url: string) => {
-        try {
-            const res = await axios.get(url);
-            return res.data;
-        } catch (error: any) {
-            throw error.response.data;
-        }
-    }
-
     const { data: post, error } = useSWR<Post>(
-        identifier && slug ? `/posts/${identifier}/${slug}` : null, fetcher
+        identifier && slug ? `/posts/${identifier}/${slug}` : null
     )
     return (
     <div>PostPage</div>
