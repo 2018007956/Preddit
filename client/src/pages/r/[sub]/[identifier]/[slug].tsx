@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { FormEvent, useState } from 'react';
 import useSWR from 'swr';
+import { FaArrowDown, FaArrowUp } from "react-icons/fa6";
 
 const PostPage = () => {
     const router = useRouter();
@@ -75,10 +76,8 @@ const PostPage = () => {
                                         className="flex justify-center w-6 mx-auto text-gray-400 rounded cursor-pointer hover:bg-gray-300 hover:text-red-500"
                                         onClick={() => vote(1)}
                                     >
-                                        <i className={classNames("fas fa-arrow-up", {
-                                            "text-red-500": post.userVote === 1
-                                        })}
-                                        ></i>
+                                        {post.userVote === 1 ? 
+                                            <FaArrowUp className="text-red-500"/> : <FaArrowUp/>}
                                     </div>
                                     <p className="text-xs font-bold">{post.voteScore}</p>
                                     {/* 싫어요 */}
@@ -86,10 +85,8 @@ const PostPage = () => {
                                         className="flex justify-center w-6 mx-auto text-gray-400 rounded cursor-pointer hover:bg-gray-300 hover:text-blue-500"
                                         onClick={() => vote(-1)}
                                     >
-                                        <i className={classNames("fas fa-arrow-down", {
-                                            "text-blue-500": post.userVote === -1
-                                        })}
-                                        ></i>
+                                        {post.userVote === -1 ? 
+                                            <FaArrowDown className="text-blue-500"/> : <FaArrowDown/>}
                                     </div>
                                 </div>
                                 <div className="py-2 pr-2">
@@ -174,10 +171,8 @@ const PostPage = () => {
                                             className="flex justify-center w-6 mx-auto text-gray-400 rounded cursor-pointer hover:bg-gray-300 hover:text-red-500"
                                             onClick={() => vote(1, comment)}
                                         >
-                                            <i className={classNames("fas fa-arrow-up", {
-                                                "text-red-500": comment.userVote === 1
-                                            })}
-                                            ></i>
+                                            {comment.userVote === 1 ? 
+                                                <FaArrowUp className="text-red-500"/> : <FaArrowUp/>}
                                         </div>
                                         <p className="text-xs font-bold">{comment.voteScore}</p>
                                         {/* 싫어요 */}
@@ -185,10 +180,8 @@ const PostPage = () => {
                                             className="flex justify-center w-6 mx-auto text-gray-400 rounded cursor-pointer hover:bg-gray-300 hover:text-blue-500"
                                             onClick={() => vote(-1, comment)}
                                         >
-                                            <i className={classNames("fas fa-arrow-down", {
-                                                "text-blue-500": comment.userVote === -1
-                                            })}
-                                            ></i>
+                                            {comment.userVote === -1 ? 
+                                                <FaArrowDown className="text-blue-500"/> : <FaArrowDown/>}
                                         </div>
                                     </div>
                                     <div className="py-2 pr-2">
