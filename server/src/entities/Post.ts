@@ -53,7 +53,7 @@ export default class Post extends BaseEntity {
         return this.comments?.length;
     }
 
-    @Expose() get VoteScore(): number {
+    @Expose() get voteScore(): number {
         return this.votes?.reduce((memo, curt) => memo + (curt.value || 0), 0);
     }
 
