@@ -10,11 +10,26 @@ import { useRouter } from 'next/router'
 
 interface PostCardProps {
     post: Post
+    subMutate: () => void
 }
 
-const PostCard = ({ post: {
-    identifier, slug, title, body, subName, createdAt, voteScore, userVote, commentCount, url, username, sub
-} }: PostCardProps) => {
+const PostCard = ({ 
+    post: {
+        identifier, 
+        slug, 
+        title, 
+        body, 
+        subName, 
+        createdAt, 
+        voteScore, 
+        userVote, 
+        commentCount, 
+        url, 
+        username, 
+        sub
+    },
+    subMutate
+ }: PostCardProps) => {
     const { authenticated } = useAuthState()
     const router = useRouter()
     const vote = async (value: number) => {
@@ -24,6 +39,7 @@ const PostCard = ({ post: {
 
         try {
             await axios.post('/votes', { identifier, slug, value });
+            subMutate();
         } catch (error) {
             console.log(error);
         }        
