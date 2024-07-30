@@ -1,17 +1,33 @@
 import Link from "next/link"
 import useSWR from "swr";
-import { Sub } from "../types";
+import { Post, Sub } from "../types";
 import axios from "axios";
 import Image from "next/image";
 import { useAuthState } from "../context/auth";
+import useSWRInfinite from "swr/infinite";
 
 export default function Home() {
   const { authenticated } = useAuthState();
   const fetcher = async (url: string) =>
     await axios.get(url).then(res => res.data);
   const address = "http://localhost:4000/api/subs/sub/topSubs";
+
+  const getKey = (pageIndex: number, previousPageData: Post[]) => {
+    if (previousPageData && !previousPageData.length) return null
+    return `/posts?page=${pageIndex}`;
+  }
+
+  const {
+    data, 
+    error, 
+    size: page, 
+    setSize: setPage, 
+    isValidating, 
+    mutate
+  } = useSWRInfinite<Post[]>(getKey);
+
   const { data: topSubs } = useSWR<Sub[]>(address, fetcher);
-  console.log('topSubs', topSubs)
+  
   return (
     <div className='flex max-w-5xl px-4 pt-5 mx-auto'>
       {/* 포스트 리스트 */}
