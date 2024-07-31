@@ -78,6 +78,9 @@ export default function Home() {
             post={post}
           />
         ))}
+        {isValidating && posts.length > 0 && (
+          <p className="text-lg text-center">Loading More..</p>
+        )}
       </div>
 
       {/* 사이드바 */}
