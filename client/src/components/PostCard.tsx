@@ -10,7 +10,7 @@ import { useRouter } from 'next/router'
 
 interface PostCardProps {
     post: Post
-    subMutate: () => void
+    subMutate?: () => void
 }
 
 const PostCard = ({ 
@@ -40,7 +40,7 @@ const PostCard = ({
 
         try {
             await axios.post('/votes', { identifier, slug, value });
-            subMutate();
+            if (subMutate) subMutate();
         } catch (error) {
             console.log(error);
         }        
@@ -88,9 +88,9 @@ const PostCard = ({
                             />
                         </Link>
                         <Link href={`/r/${subName}`}>
-                            <a className="ml-2 text-xs font-bold cursor-pointer hover:underline">
+                            <span className="ml-2 text-xs font-bold cursor-pointer hover:underline">
                                 /r/{subName}
-                            </a>
+                            </span>
                         </Link>
                         <span className="mx-1 text-xs text-gray-400">•</span>
                     </div>
