@@ -76,6 +76,7 @@ export default function Home() {
           <PostCard
             key={post.identifier}
             post={post}
+            mutate={mutate}
           />
         ))}
         {isValidating && posts.length > 0 && (
