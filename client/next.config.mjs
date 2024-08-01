@@ -5,7 +5,7 @@ const nextConfig = {
     domains: [
       "www.gravatar.com", 
       "localhost",
-      "https://preddit.loca.lt"
+      "https://production-url"
     ]
   }
 };
