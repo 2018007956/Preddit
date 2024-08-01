@@ -13,7 +13,7 @@ import dotenv from 'dotenv';
 import cookieParser from "cookie-parser";
 
 const app = express()
-const origin = "http://localhost:3000";
+const origin = process.env.ORIGIN;
 app.use(
 	cors({
     	origin,
@@ -36,7 +36,7 @@ app.use(express.static("public"));
 
 let port = 4000;
 app.listen(port, async () => {
-    console.log(`server running at http://localhost:${port}`);
+    console.log(`server running at ${process.env.APP_URL}`);
 
     AppDataSource.initialize().then(async () => {
         console.log("database initialized")    
