@@ -5,6 +5,7 @@ import Sub from "../entities/Sub";
 import Post from "../entities/Post";
 import Comment from "../entities/Comment";
 import Vote from "../entities/Vote";
+import { slugify } from "../utils/helpers";
 
 const getPosts = async (req: Request, res: Response) => {
     const currentPage: number = (req.query.page || 0) as number;
@@ -189,6 +190,7 @@ const updatePost = async (req: Request, res: Response) => {
 
         post.title = title;
         post.body = body;
+        post.slug = slugify(title);
 
         await post.save();
 
