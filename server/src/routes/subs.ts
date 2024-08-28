@@ -10,6 +10,8 @@ import multer, { FileFilterCallback } from "multer";
 import path from "path";
 import { unlinkSync } from "fs";
 import { makeId } from "../utils/helpers";
+import Vote from "../entities/Vote";
+import Comment from "../entities/Comment";
 
 const getSub = async (req: Request, res: Response) => {
     const name = req.params.name;
@@ -77,6 +79,70 @@ const createSub = async (req: Request, res: Response) => {
     } catch (error) {
         console.log(error);
         return res.status(500).json({ error: "문제가 발생했습니다." });
+    }
+};
+
+const deleteSub = async (req: Request, res: Response) => {
+    const { name } = req.params;
+    try {
+        const community = await Sub.findOneOrFail({ 
+            where: { name },
+            relations: ["posts", "posts.votes", "posts.comments"]
+        });
+        
+        // Delete post's votes
+        await Vote.createQueryBuilder()
+            .delete()
+            .from(Vote)
+            .where("postId IN (:...postIds)", { postIds: community.posts.map(post => post.id) })
+            .execute();
+
+        // Delete post's comments
+        await Comment.createQueryBuilder()
+            .delete()
+            .from(Comment)
+            .where("postId IN (:...postIds)", { postIds: community.posts.map(post => post.id) })
+            .execute();
+
+        // Delete posts
+        await Post.createQueryBuilder()
+            .delete()
+            .from(Post)
+            .where("subName = :subName", { subName: community.name })
+            .execute();
+
+        // Delete the sub
+        const sub = await Sub.createQueryBuilder()
+            .delete()
+            .from(Sub)
+            .where({ name: community.name })
+            .execute();
+
+        if (community.imageUrn) {
+            const deleteImage = path.resolve(
+                process.cwd(),
+                'public',
+                'images',
+                community.imageUrn
+            );
+            unlinkSync(deleteImage);
+        }
+        if (community.bannerUrn) {
+            const deleteBanner = path.resolve(
+                process.cwd(),
+                'public',
+                'images',
+                community.bannerUrn
+            );
+            unlinkSync(deleteBanner);
+        }
+
+        if (!sub) return;
+
+        return res.json(sub);
+    } catch (error) {
+        console.log(error);
+        return res.status(404).json({ error: "Something went wrong" });
     }
 };
 
@@ -182,7 +248,8 @@ const uploadSubImage = async (req: Request, res: Response) => {
 const router = Router();
 
 router.get("/:name", userMiddleware, getSub);
-router.post("/", userMiddleware, authMiddleware, createSub);   // call handler
+router.post("/", userMiddleware, authMiddleware, createSub);
+router.delete("/:name", userMiddleware, authMiddleware, deleteSub)
 router.get("/sub/topSubs", topSubs);
 router.post("/:name/upload", userMiddleware, authMiddleware, ownSub, upload.single("file"), uploadSubImage);
 export default router;
