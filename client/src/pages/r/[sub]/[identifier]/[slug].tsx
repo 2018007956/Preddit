@@ -109,17 +109,17 @@ const PostPage = () => {
                                             <FaArrowDown className="text-blue-500"/> : <FaArrowDown/>}
                                     </div>
                                 </div>
-                                <div className="py-2 pr-2">
+                                <div className="py-2 pr-2 w-full">
                                     <div className="flex items-center justify-between">
                                         <p className="text-xs text-gray-400">
                                             Posted by 
                                             <Link href={`/u/${post.username}`}>
-                                                <span className="mx-1 hover:underline">
+                                                <span className="hover:underline">
                                                     /u/{post.username}
                                                 </span>
                                             </Link>
                                             <Link href={post.url}>
-                                                <span className="mx-1 hover:underline">
+                                                <span className="hover:underline">
                                                     {dayjs(post.createdAt).format("YYYY-MM-DD HH:mm")}
                                                 </span>
                                             </Link>
