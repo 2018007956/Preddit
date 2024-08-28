@@ -6,12 +6,22 @@ import Link from 'next/link';
 import { useRouter } from 'next/router'
 import React from 'react'
 import useSWR from 'swr';
-
+import axios from 'axios';
 const UserPage = () => {
     const router = useRouter();
     const username = router.query.username;
 
-    const { data, error } = useSWR<any>(username ? `/users/${username}` : null);
+    const { data, error, mutate } = useSWR<any>(username ? `/users/${username}` : null);
+
+    const handlePostDelete = async (identifier: string, slug: string) => {
+        try {
+            await axios.delete(`/posts/${identifier}/${slug}`);
+            mutate();
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     if (!data) return null;
     return (
         <div className="flex max-w-5xl px-4 pt-5 mx-auto">
@@ -20,7 +30,7 @@ const UserPage = () => {
                 {data.userData.map((data: any) => {
                     if (data.type === "Post") {
                         const post: Post = data;
-                        return <PostCard key={post.identifier} post={post} />
+                        return <PostCard key={post.identifier} post={post} onDelete={handlePostDelete} />
                     } else {
                         const comment: Comment = data;
                         return (

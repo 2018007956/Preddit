@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Post } from '../types'
-import { FaArrowDown, FaArrowUp } from 'react-icons/fa6'
+import { FaArrowDown, FaArrowUp, FaEllipsisV } from 'react-icons/fa'
 import Link from 'next/link'
 import Image from 'next/image'
 import dayjs from 'dayjs'
@@ -12,6 +12,7 @@ interface PostCardProps {
     post: Post
     subMutate?: () => void
     mutate?: () => void
+    onDelete: (identifier: string, slug: string) => void
 }
 
 const PostCard = ({ 
@@ -30,11 +31,14 @@ const PostCard = ({
         sub
     },
     mutate,
-    subMutate
+    subMutate,
+    onDelete
  }: PostCardProps) => {
     const { authenticated } = useAuthState()
     const router = useRouter()
     const isInSubPage = router.pathname === '/r/[sub]'
+    const [showDeleteOption, setShowDeleteOption] = useState(false)
+
     const vote = async (value: number) => {
         if (!authenticated) router.push('/login');
         
@@ -79,38 +83,64 @@ const PostCard = ({
             </div>
             {/* 포스트 데이터 부분 */}
             <div className="w-full p-2">
-                <div className="flex items-center">
-                    {!isInSubPage && (
-                        <div className='flex items-center'>
-                            <Link href={`/r/${subName}`}>
-                                <Image
-                                    src={sub!.imageUrl}
-                                    alt="sub"
-                                    className='rounded-full cursor-pointer'
-                                    width={12}
-                                    height={12}
-                                />
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                        {!isInSubPage && (
+                            <div className='flex items-center'>
+                                <Link href={`/r/${subName}`}>
+                                    <Image
+                                        src={sub!.imageUrl}
+                                        alt="sub"
+                                        className='rounded-full cursor-pointer'
+                                        width={12}
+                                        height={12}
+                                    />
+                                </Link>
+                                <Link href={`/r/${subName}`}>
+                                    <span className="ml-2 text-xs font-bold cursor-pointer hover:underline">
+                                        /r/{subName}
+                                    </span>
+                                </Link>
+                                <span className="mx-1 text-xs text-gray-400">•</span>
+                            </div>
+                        )}
+
+                        <p className="text-xs text-gray-400">
+                            Posted by
+                            <Link href={`/u/${username}`}>
+                                <span className="mx-1 hover:underline">/u/{username}</span>
                             </Link>
-                            <Link href={`/r/${subName}`}>
-                                <span className="ml-2 text-xs font-bold cursor-pointer hover:underline">
-                                    /r/{subName}
+                            <Link href={url}>
+                                <span className='mx-1 hover:underline'>
+                                    {dayjs(createdAt).format('YYYY-MM-DD HH:mm')}
                                 </span>
                             </Link>
-                            <span className="mx-1 text-xs text-gray-400">•</span>
+                        </p>
+                    </div>
+
+                    {authenticated && (
+                        <div className="relative">
+                            <button
+                                className="px-1 py-1 text-xs text-gray-400 rounded"
+                                onClick={() => setShowDeleteOption(!showDeleteOption)}
+                            >
+                                <FaEllipsisV />
+                            </button>
+                            {showDeleteOption && (
+                                <div className="absolute right-0 top-full mb-1 w-32 py-2 bg-white rounded-lg shadow-xl">
+                                    <button
+                                        className="block w-full px-4 py-2 text-xs text-left text-gray-700 hover:bg-gray-100"
+                                        onClick={() => {
+                                            onDelete(identifier, slug);
+                                            setShowDeleteOption(false);
+                                        }}
+                                    >
+                                        삭제
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     )}
-
-                    <p className="text-xs text-gray-400">
-                        Posted by
-                        <Link href={`/u/${username}`}>
-                            <span className="mx-1 hover:underline">/u/{username}</span>
-                        </Link>
-                        <Link href={url}>
-                            <span className='mx-1 hover:underline'>
-                                {dayjs(createdAt).format('YYYY-MM-DD HH:mm')}
-                            </span>
-                        </Link>
-                    </p>
                 </div>
 
                 <Link href={url}>
@@ -122,7 +152,6 @@ const PostCard = ({
                         <i className="mr-1 fas fa-comment-alt fa-xs"></i>
                         <span>{commentCount}</span>
                     </Link>
-
                 </div>
             </div>
         </div>

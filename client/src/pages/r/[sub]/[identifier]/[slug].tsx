@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { FormEvent, useState } from 'react';
 import useSWR from 'swr';
-import { FaArrowDown, FaArrowUp } from "react-icons/fa6";
+import { FaArrowDown, FaArrowUp, FaEllipsisV } from "react-icons/fa";
 
 const PostPage = () => {
     const router = useRouter();
@@ -20,7 +20,7 @@ const PostPage = () => {
     const { data: comments, mutate: commentMutate } = useSWR<Comment[]>(
         identifier && slug ? `/posts/${identifier}/${slug}/comments` : null
     )
-    console.log("comments", comments)
+    const [showDeleteOption, setShowDeleteOption] = useState(false)
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         if (newComment.trim() === "") return;
@@ -61,6 +61,15 @@ const PostPage = () => {
         }
     }
 
+    const onDelete = async (identifier: string, slug: string) => {
+        try {
+            await axios.delete(`/posts/${identifier}/${slug}`);
+            router.push('/');
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     return (
         <div className="flex max-w-5xl px-4 pt-5 mx-auto">
             {/* Post */}
@@ -90,8 +99,8 @@ const PostPage = () => {
                                     </div>
                                 </div>
                                 <div className="py-2 pr-2">
-                                    <div className="flex items-center">
-                                        <p className="text-xs test-gray-400">
+                                    <div className="flex items-center justify-between">
+                                        <p className="text-xs text-gray-400">
                                             Posted by 
                                             <Link href={`/u/${post.username}`}>
                                                 <span className="mx-1 hover:underline">
@@ -104,7 +113,31 @@ const PostPage = () => {
                                                 </span>
                                             </Link>
                                         </p>
+                                        {authenticated && (
+                                            <div className="relative">
+                                                <button
+                                                    className="px-1 py-1 text-xs text-gray-400 rounded"
+                                                    onClick={() => setShowDeleteOption(!showDeleteOption)}
+                                                >
+                                                    <FaEllipsisV />
+                                                </button>
+                                                {showDeleteOption && (
+                                                    <div className="absolute right-0 top-full mb-1 w-32 py-2 bg-white rounded-lg shadow-xl">
+                                                        <button
+                                                            className="block w-full px-4 py-2 text-xs text-left text-gray-700 hover:bg-gray-100"
+                                                            onClick={() => {
+                                                                onDelete(post.identifier, post.slug);
+                                                                setShowDeleteOption(false);
+                                                            }}
+                                                        >
+                                                            삭제
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
                                     </div>
+
                                     <h1 className="my-1 text-xl font-medium">{post.title}</h1>
                                     <p className="my-3 text-sm">{post.body}</p>
                                     <div className="flex">

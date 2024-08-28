@@ -4,6 +4,7 @@ import authMiddleware from '../middlewares/auth';
 import Sub from "../entities/Sub";
 import Post from "../entities/Post";
 import Comment from "../entities/Comment";
+import Vote from "../entities/Vote";
 
 const getPosts = async (req: Request, res: Response) => {
     const currentPage: number = (req.query.page || 0) as number;
@@ -115,9 +116,37 @@ const createPostComment = async (req: Request, res: Response) => {
     }
 }
 
+const deletePost = async (req: Request, res: Response) => {
+    const { identifier, slug } = req.params;
+    try {
+        const post = await Post.findOneByOrFail({ identifier, slug });
+
+        // 관련 투표 삭제
+        const votes = await Vote.find({ where: { postId: post.id } });
+        await Promise.all(votes.map(async (vote) => {
+            await vote.remove();
+        }));
+
+        // 관련 댓글 삭제
+        const comments = await Comment.find({ where: { postId: post.id } });
+        await Promise.all(comments.map(async (comment) => {
+            await comment.remove();
+        }));
+
+        // 포스트 삭제
+        await post.remove();
+
+        return res.json({ message: "Post deleted successfully" });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: "Something went wrong" });
+    }
+}
+
 const router = Router();
 router.get("/:identifier/:slug", userMiddleware, getPost)
 router.post("/", userMiddleware, authMiddleware, createPost);
+router.delete("/:identifier/:slug", userMiddleware, authMiddleware, deletePost);
 router.get("/", userMiddleware, getPosts)
 router.get("/:identifier/:slug/comments", userMiddleware, getPostComment);
 router.post("/:identifier/:slug/comments", userMiddleware, createPostComment);

@@ -16,7 +16,14 @@ const SubPage = () => {
     const router = useRouter();
     const subName = router.query.sub;
     const { data: sub, error, mutate } = useSWR(subName ? `/subs/${subName}` : null);
-    console.log('sub', sub);
+    const handlePostDelete = async (identifier: string, slug: string) => {
+        try {
+          await axios.delete(`/posts/${identifier}/${slug}`);
+          mutate();
+        } catch (error) {
+          console.log(error);
+        }
+    }
 
     useEffect(() => {
         if(!sub) return;
@@ -56,7 +63,7 @@ const SubPage = () => {
         renderPosts = <p className='text-lg text-center'>아직 작성된 포스트가 없습니다.</p>;
     } else {
         renderPosts = sub.posts.map((post: Post) => (
-            <PostCard key={post.identifier} post={post} subMutate={mutate} />
+            <PostCard key={post.identifier} post={post} subMutate={mutate} onDelete={handlePostDelete} />
         ));
     }
 
