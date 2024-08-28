@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { FormEvent, useState } from 'react';
 import useSWR from 'swr';
-import { FaArrowDown, FaArrowUp } from "react-icons/fa6";
+import { FaArrowDown, FaArrowUp, FaEllipsisV } from "react-icons/fa";
 
 const PostPage = () => {
     const router = useRouter();
@@ -20,7 +20,9 @@ const PostPage = () => {
     const { data: comments, mutate: commentMutate } = useSWR<Comment[]>(
         identifier && slug ? `/posts/${identifier}/${slug}/comments` : null
     )
-    console.log("comments", comments)
+    const [showDeleteOption, setShowDeleteOption] = useState(false)
+    const [showDeleteCommentOption, setShowDeleteCommentOption] = useState<string | null>(null);
+
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         if (newComment.trim() === "") return;
@@ -30,6 +32,15 @@ const PostPage = () => {
             });
             commentMutate();
             setNewComment("");
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const onDeleteComment = async (identifier: string) => {
+        try {
+            await axios.delete(`/posts/${post?.identifier}/${post?.slug}/comments/${identifier}`);
+            commentMutate();
         } catch (error) {
             console.log(error);
         }
@@ -56,6 +67,15 @@ const PostPage = () => {
             });
             postMutate();
             commentMutate();
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const onDelete = async (identifier: string, slug: string) => {
+        try {
+            await axios.delete(`/posts/${identifier}/${slug}`);
+            router.push('/');
         } catch (error) {
             console.log(error);
         }
@@ -89,22 +109,46 @@ const PostPage = () => {
                                             <FaArrowDown className="text-blue-500"/> : <FaArrowDown/>}
                                     </div>
                                 </div>
-                                <div className="py-2 pr-2">
-                                    <div className="flex items-center">
-                                        <p className="text-xs test-gray-400">
+                                <div className="py-2 pr-2 w-full">
+                                    <div className="flex items-center justify-between">
+                                        <p className="text-xs text-gray-400">
                                             Posted by 
                                             <Link href={`/u/${post.username}`}>
-                                                <span className="mx-1 hover:underline">
+                                                <span className="hover:underline">
                                                     /u/{post.username}
                                                 </span>
                                             </Link>
                                             <Link href={post.url}>
-                                                <span className="mx-1 hover:underline">
+                                                <span className="hover:underline">
                                                     {dayjs(post.createdAt).format("YYYY-MM-DD HH:mm")}
                                                 </span>
                                             </Link>
                                         </p>
+                                        {authenticated && (
+                                            <div className="relative">
+                                                <button
+                                                    className="px-1 py-1 text-xs text-gray-400 rounded"
+                                                    onClick={() => setShowDeleteOption(!showDeleteOption)}
+                                                >
+                                                    <FaEllipsisV />
+                                                </button>
+                                                {showDeleteOption && (
+                                                    <div className="absolute right-0 top-full mb-1 w-32 py-2 bg-white rounded-lg shadow-xl">
+                                                        <button
+                                                            className="block w-full px-4 py-2 text-xs text-left text-gray-700 hover:bg-gray-100"
+                                                            onClick={() => {
+                                                                onDelete(post.identifier, post.slug);
+                                                                setShowDeleteOption(false);
+                                                            }}
+                                                        >
+                                                            삭제
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
                                     </div>
+
                                     <h1 className="my-1 text-xl font-medium">{post.title}</h1>
                                     <p className="my-3 text-sm">{post.body}</p>
                                     <div className="flex">
@@ -184,21 +228,47 @@ const PostPage = () => {
                                                 <FaArrowDown className="text-blue-500"/> : <FaArrowDown/>}
                                         </div>
                                     </div>
-                                    <div className="py-2 pr-2">
-                                        <p className="mb-1 text-xs leading-none">
-                                            <Link href={`/u/${comment.username}`}>
-                                                <span className="mr-1 font-bold hover:underline">
-                                                    {comment.username}
+                                    <div className="py-2 pr-2 w-full">
+                                        <div className="flex items-center justify-between">
+                                            <p className="mb-1 text-xs leading-none">
+                                                <Link href={`/u/${comment.username}`}>
+                                                    <span className="mr-1 font-bold hover:underline">
+                                                        {comment.username}
+                                                    </span>
+                                                </Link>
+                                                <span className="text-gray-600">
+                                                    {`
+                                                        ${comment.voteScore}
+                                                        posts
+                                                        ${dayjs(comment.createdAt).format("YYYY-MM-DD HH:mm")}
+                                                    `}
                                                 </span>
-                                            </Link>
-                                            <span className="text-gray-600">
-                                                {`
-                                                    ${comment.voteScore}
-                                                    posts
-                                                    ${dayjs(comment.createdAt).format("YYYY-MM-DD HH:mm")}
-                                                `}
-                                            </span>
-                                        </p>
+                                            </p>
+                                            {/* 댓글 삭제 */}
+                                            {authenticated && (user?.username === comment.username) && (
+                                                <div className="relative">
+                                                    <button
+                                                        className="px-1 py-1 text-xs text-gray-400 rounded"
+                                                        onClick={() => setShowDeleteCommentOption(comment.identifier)}
+                                                    >
+                                                        <FaEllipsisV />
+                                                    </button>
+                                                    {showDeleteCommentOption === comment.identifier && (
+                                                        <div className="absolute right-0 top-full mb-1 w-32 py-2 bg-white rounded-lg shadow-xl">
+                                                            <button
+                                                                className="block w-full px-4 py-2 text-xs text-left text-gray-700 hover:bg-gray-100"
+                                                                onClick={() => {
+                                                                    onDeleteComment(comment.identifier);
+                                                                    setShowDeleteCommentOption(null);
+                                                                }}
+                                                            >
+                                                                삭제
+                                                            </button>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>                
                                         <p>{comment.body}</p>
                                     </div>
                                 </div>

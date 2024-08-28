@@ -19,6 +19,15 @@ export default function Home() {
     return `/posts?page=${pageIndex}`;
   }
 
+  const handlePostDelete = async (identifier: string, slug: string) => {
+    try {
+      await axios.delete(`/posts/${identifier}/${slug}`);
+      mutate();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   const {
     data, 
     error, 
@@ -77,6 +86,7 @@ export default function Home() {
             key={post.identifier}
             post={post}
             mutate={mutate}
+            onDelete={handlePostDelete}
           />
         ))}
         {isValidating && posts.length > 0 && (

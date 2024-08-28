@@ -25,6 +25,10 @@ export default class Vote extends BaseEntity {
     @Column({nullable: true})
     commentId: number;
 
-    @ManyToOne(() => Comment)
+    @ManyToOne(() => Comment, (comment) => comment.votes, {
+        // comment를 삭제할 때 연관된 vote도 자동으로 삭제되도록 외래 키 제약 조건을 ON DELETE CASCADE로 설정
+        onDelete: "CASCADE"
+    })
+    @JoinColumn({ name: "commentId" })
     comment: Comment;
 }
