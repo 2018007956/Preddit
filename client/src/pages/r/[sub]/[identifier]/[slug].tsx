@@ -20,8 +20,10 @@ const PostPage = () => {
     const { data: comments, mutate: commentMutate } = useSWR<Comment[]>(
         identifier && slug ? `/posts/${identifier}/${slug}/comments` : null
     )
-    const [showDeleteOption, setShowDeleteOption] = useState(false)
-    const [showDeleteCommentOption, setShowDeleteCommentOption] = useState<string | null>(null);
+    const [showOptions, setShowOptions] = useState(false)
+    const [isEditing, setIsEditing] = useState(false)
+    const [editedTitle, setEditedTitle] = useState(post?.title)
+    const [editedBody, setEditedBody] = useState(post?.body)
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
@@ -34,6 +36,22 @@ const PostPage = () => {
             setNewComment("");
         } catch (error) {
             console.log(error);
+        }
+    }
+
+    const handleEditClick = () => {
+        setIsEditing(true)
+        setShowOptions(false)
+    }
+
+    const handleEditSubmit = async () => {
+        try {
+            await axios.put(`/posts/${identifier}/${slug}`, { title: editedTitle, body: editedBody })
+            setIsEditing(false)
+            if (postMutate) postMutate()
+            if (commentMutate) commentMutate()
+        } catch (error) {
+            console.log(error)
         }
     }
 
@@ -128,17 +146,23 @@ const PostPage = () => {
                                             <div className="relative">
                                                 <button
                                                     className="px-1 py-1 text-xs text-gray-400 rounded"
-                                                    onClick={() => setShowDeleteOption(!showDeleteOption)}
+                                                    onClick={() => setShowOptions(!showOptions)}
                                                 >
                                                     <FaEllipsisV />
                                                 </button>
-                                                {showDeleteOption && (
+                                                {showOptions && (
                                                     <div className="absolute right-0 top-full mb-1 w-32 py-2 bg-white rounded-lg shadow-xl">
+                                                        <button
+                                                                className="block w-full px-4 py-2 text-xs text-left text-gray-700 hover:bg-gray-100"
+                                                                onClick={handleEditClick}
+                                                            >
+                                                            수정
+                                                        </button>
                                                         <button
                                                             className="block w-full px-4 py-2 text-xs text-left text-gray-700 hover:bg-gray-100"
                                                             onClick={() => {
                                                                 onDelete(post.identifier, post.slug);
-                                                                setShowDeleteOption(false);
+                                                                setShowOptions(false);
                                                             }}
                                                         >
                                                             삭제
@@ -148,17 +172,48 @@ const PostPage = () => {
                                             </div>
                                         )}
                                     </div>
-
-                                    <h1 className="my-1 text-xl font-medium">{post.title}</h1>
-                                    <p className="my-3 text-sm">{post.body}</p>
-                                    <div className="flex">
-                                        <button>
-                                            <i className="mr-1 fas fa-comment-alt fa-xs"></i>
-                                            <span className="font-bold">
-                                                {post.commentCount} Comments
-                                            </span>
-                                        </button>
-                                    </div>
+                                    {isEditing ? (
+                                        <div className="mt-2">
+                                            <input
+                                                type="text"
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                                value={editedTitle}
+                                                onChange={(e) => setEditedTitle(e.target.value)}
+                                            />
+                                            <textarea
+                                                className="w-full px-3 py-2 mt-2 border border-gray-300 rounded-md"
+                                                value={editedBody}
+                                                onChange={(e) => setEditedBody(e.target.value)}
+                                            />
+                                            <div className="mt-2">
+                                                <button
+                                                    className="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600"
+                                                    onClick={handleEditSubmit}
+                                                >
+                                                    수정 완료
+                                                </button>
+                                                <button
+                                                    className="px-4 py-2 ml-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300"
+                                                    onClick={() => setIsEditing(false)}
+                                                >
+                                                    취소
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <>
+                                            <Link href={post.url}>
+                                                <span className="my-1 text-lg font-medium">{post.title}</span>
+                                            </Link>
+                                            {post.body && <p className="my-1 text-sm">{post.body}</p>}
+                                            <div className="flex">
+                                                <Link href={post.url}>
+                                                    <i className="mr-1 fas fa-comment-alt fa-xs"></i>
+                                                    <span>{post.commentCount}</span>
+                                                </Link>
+                                            </div>
+                                        </>
+                                    )}
                                 </div>
                             </div>
                             {/* 댓글 작성 구간 */}
@@ -245,21 +300,21 @@ const PostPage = () => {
                                                 </span>
                                             </p>
                                             {/* 댓글 삭제 */}
-                                            {authenticated && (user?.username === comment.username) && (
+                                            {authenticated && (
                                                 <div className="relative">
                                                     <button
                                                         className="px-1 py-1 text-xs text-gray-400 rounded"
-                                                        onClick={() => setShowDeleteCommentOption(comment.identifier)}
+                                                        onClick={() => setShowOptions(!showOptions)}
                                                     >
                                                         <FaEllipsisV />
                                                     </button>
-                                                    {showDeleteCommentOption === comment.identifier && (
+                                                    {showOptions && (
                                                         <div className="absolute right-0 top-full mb-1 w-32 py-2 bg-white rounded-lg shadow-xl">
                                                             <button
                                                                 className="block w-full px-4 py-2 text-xs text-left text-gray-700 hover:bg-gray-100"
                                                                 onClick={() => {
                                                                     onDeleteComment(comment.identifier);
-                                                                    setShowDeleteCommentOption(null);
+                                                                    setShowOptions(false);
                                                                 }}
                                                             >
                                                                 삭제
@@ -268,8 +323,7 @@ const PostPage = () => {
                                                     )}
                                                 </div>
                                             )}
-                                        </div>                
-                                        <p>{comment.body}</p>
+                                        </div>
                                     </div>
                                 </div>
                             ))}
