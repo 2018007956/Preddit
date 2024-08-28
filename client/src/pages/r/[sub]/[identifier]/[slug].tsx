@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import dayjs from 'dayjs';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import useSWR from 'swr';
 import { FaArrowDown, FaArrowUp, FaEllipsisV } from "react-icons/fa";
 
@@ -22,8 +22,15 @@ const PostPage = () => {
     )
     const [showOptions, setShowOptions] = useState(false)
     const [isEditing, setIsEditing] = useState(false)
-    const [editedTitle, setEditedTitle] = useState(post?.title)
-    const [editedBody, setEditedBody] = useState(post?.body)
+    const [editedTitle, setEditedTitle] = useState("")
+    const [editedBody, setEditedBody] = useState("")
+
+    useEffect(() => {
+        if (post) {
+            setEditedTitle(post.title)
+            setEditedBody(post.body)
+        }
+    }, [post])
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
@@ -212,121 +219,121 @@ const PostPage = () => {
                                                     <span>{post.commentCount}</span>
                                                 </Link>
                                             </div>
+                                            {/* 댓글 작성 구간 */}
+                                            <div className="pr-6 mb-4 pl-9">
+                                                {authenticated ?
+                                                    (<div>
+                                                        <p className="mb-1 text-xs">
+                                                            <Link href={`/u/${user?.username}`}>
+                                                                <span className="font-semibold text-blue-500">
+                                                                    {user?.username}
+                                                                </span>
+                                                            </Link>
+                                                            {" "}으로 댓글 작성
+                                                        </p>
+                                                        <form onSubmit={handleSubmit}>
+                                                            <textarea
+                                                                className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-gray-600"
+                                                                onChange={e => setNewComment(e.target.value)}
+                                                                value={newComment}
+                                                            >
+                                                            </textarea>
+                                                            <div className="flex justify-end">
+                                                                <button
+                                                                    className="px-3 py-1 text-white bg-gray-400 rounded"
+                                                                    disabled={newComment.trim() === ""}
+                                                                >
+                                                                    댓글 작성
+                                                                </button>
+                                                            </div>
+                                                        </form>
+                                                    </div>)
+                                                    :
+                                                    (<div className="flex items-center justify-between px-2 py-4 border border-gray-200 rounded">
+                                                        <p className="font-semibold text-gray-400">
+                                                            댓글 작성을 위해서 로그인 해주세요.
+                                                        </p>
+                                                        <div>
+                                                            <Link href={`/login`}>
+                                                                <span className="px-3 py-1 text-white bg-gray-400 rounded">
+                                                                    로그인
+                                                                </span>
+                                                            </Link>
+                                                        </div>
+                                                    </div>)
+                                                }
+                                            </div>
+                                            {/* 댓글 리스트 부분 */}
+                                            {comments?.map(comment => (
+                                                <div className="flex" key={comment.identifier}>
+                                                    {/* 좋아요 싫어요 기능 부분 */}
+                                                    <div className="flex-shrink-0 w-10 py-2 text-center rounded-l">
+                                                        {/* 좋아요 */}
+                                                        <div
+                                                            className="flex justify-center w-6 mx-auto text-gray-400 rounded cursor-pointer hover:bg-gray-300 hover:text-red-500"
+                                                            onClick={() => vote(1, comment)}
+                                                        >
+                                                            {comment.userVote === 1 ? 
+                                                                <FaArrowUp className="text-red-500"/> : <FaArrowUp/>}
+                                                        </div>
+                                                        <p className="text-xs font-bold">{comment.voteScore}</p>
+                                                        {/* 싫어요 */}
+                                                        <div
+                                                            className="flex justify-center w-6 mx-auto text-gray-400 rounded cursor-pointer hover:bg-gray-300 hover:text-blue-500"
+                                                            onClick={() => vote(-1, comment)}
+                                                        >
+                                                            {comment.userVote === -1 ? 
+                                                                <FaArrowDown className="text-blue-500"/> : <FaArrowDown/>}
+                                                        </div>
+                                                    </div>
+                                                    <div className="py-2 pr-2 w-full">
+                                                        <div className="flex items-center justify-between">
+                                                            <p className="mb-1 text-xs leading-none">
+                                                                <Link href={`/u/${comment.username}`}>
+                                                                    <span className="mr-1 font-bold hover:underline">
+                                                                        {comment.username}
+                                                                    </span>
+                                                                </Link>
+                                                                <span className="text-gray-600">
+                                                                    {`
+                                                                        ${comment.voteScore}
+                                                                        posts
+                                                                        ${dayjs(comment.createdAt).format("YYYY-MM-DD HH:mm")}
+                                                                    `}
+                                                                </span>
+                                                            </p>
+                                                            {/* 댓글 삭제 */}
+                                                            {authenticated && (
+                                                                <div className="relative">
+                                                                    <button
+                                                                        className="px-1 py-1 text-xs text-gray-400 rounded"
+                                                                        onClick={() => setShowOptions(!showOptions)}
+                                                                    >
+                                                                        <FaEllipsisV />
+                                                                    </button>
+                                                                    {showOptions && (
+                                                                        <div className="absolute right-0 top-full mb-1 w-32 py-2 bg-white rounded-lg shadow-xl">
+                                                                            <button
+                                                                                className="block w-full px-4 py-2 text-xs text-left text-gray-700 hover:bg-gray-100"
+                                                                                onClick={() => {
+                                                                                    onDeleteComment(comment.identifier);
+                                                                                    setShowOptions(false);
+                                                                                }}
+                                                                            >
+                                                                                삭제
+                                                                            </button>
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
                                         </>
                                     )}
                                 </div>
                             </div>
-                            {/* 댓글 작성 구간 */}
-                            <div className="pr-6 mb-4 pl-9">
-                                {authenticated ?
-                                    (<div>
-                                        <p className="mb-1 text-xs">
-                                            <Link href={`/u/${user?.username}`}>
-                                                <span className="font-semibold text-blue-500">
-                                                    {user?.username}
-                                                </span>
-                                            </Link>
-                                            {" "}으로 댓글 작성
-                                        </p>
-                                        <form onSubmit={handleSubmit}>
-                                            <textarea
-                                                className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-gray-600"
-                                                onChange={e => setNewComment(e.target.value)}
-                                                value={newComment}
-                                            >
-                                            </textarea>
-                                            <div className="flex justify-end">
-                                                <button
-                                                    className="px-3 py-1 text-white bg-gray-400 rounded"
-                                                    disabled={newComment.trim() === ""}
-                                                >
-                                                    댓글 작성
-                                                </button>
-                                            </div>
-                                        </form>
-                                    </div>)
-                                    :
-                                    (<div className="flex items-center justify-between px-2 py-4 border border-gray-200 rounded">
-                                        <p className="font-semibold text-gray-400">
-                                            댓글 작성을 위해서 로그인 해주세요.
-                                        </p>
-                                        <div>
-                                            <Link href={`/login`}>
-                                                <span className="px-3 py-1 text-white bg-gray-400 rounded">
-                                                    로그인
-                                                </span>
-                                            </Link>
-                                        </div>
-                                    </div>)
-                                }
-                            </div>
-                            {/* 댓글 리스트 부분 */}
-                            {comments?.map(comment => (
-                                <div className="flex" key={comment.identifier}>
-                                    {/* 좋아요 싫어요 기능 부분 */}
-                                    <div className="flex-shrink-0 w-10 py-2 text-center rounded-l">
-                                        {/* 좋아요 */}
-                                        <div
-                                            className="flex justify-center w-6 mx-auto text-gray-400 rounded cursor-pointer hover:bg-gray-300 hover:text-red-500"
-                                            onClick={() => vote(1, comment)}
-                                        >
-                                            {comment.userVote === 1 ? 
-                                                <FaArrowUp className="text-red-500"/> : <FaArrowUp/>}
-                                        </div>
-                                        <p className="text-xs font-bold">{comment.voteScore}</p>
-                                        {/* 싫어요 */}
-                                        <div
-                                            className="flex justify-center w-6 mx-auto text-gray-400 rounded cursor-pointer hover:bg-gray-300 hover:text-blue-500"
-                                            onClick={() => vote(-1, comment)}
-                                        >
-                                            {comment.userVote === -1 ? 
-                                                <FaArrowDown className="text-blue-500"/> : <FaArrowDown/>}
-                                        </div>
-                                    </div>
-                                    <div className="py-2 pr-2 w-full">
-                                        <div className="flex items-center justify-between">
-                                            <p className="mb-1 text-xs leading-none">
-                                                <Link href={`/u/${comment.username}`}>
-                                                    <span className="mr-1 font-bold hover:underline">
-                                                        {comment.username}
-                                                    </span>
-                                                </Link>
-                                                <span className="text-gray-600">
-                                                    {`
-                                                        ${comment.voteScore}
-                                                        posts
-                                                        ${dayjs(comment.createdAt).format("YYYY-MM-DD HH:mm")}
-                                                    `}
-                                                </span>
-                                            </p>
-                                            {/* 댓글 삭제 */}
-                                            {authenticated && (
-                                                <div className="relative">
-                                                    <button
-                                                        className="px-1 py-1 text-xs text-gray-400 rounded"
-                                                        onClick={() => setShowOptions(!showOptions)}
-                                                    >
-                                                        <FaEllipsisV />
-                                                    </button>
-                                                    {showOptions && (
-                                                        <div className="absolute right-0 top-full mb-1 w-32 py-2 bg-white rounded-lg shadow-xl">
-                                                            <button
-                                                                className="block w-full px-4 py-2 text-xs text-left text-gray-700 hover:bg-gray-100"
-                                                                onClick={() => {
-                                                                    onDeleteComment(comment.identifier);
-                                                                    setShowOptions(false);
-                                                                }}
-                                                            >
-                                                                삭제
-                                                            </button>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
                         </>
                     )}
                 </div>
