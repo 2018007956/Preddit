@@ -28,6 +28,15 @@ export default function Home() {
     }
   }
 
+  const handlePostModify = async (identifier: string, slug: string, title: string, body: string) => {
+    try {
+      await axios.put(`/posts/${identifier}/${slug}`, { title, body });
+      mutate();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   const {
     data, 
     error, 
