@@ -21,6 +21,8 @@ const PostPage = () => {
         identifier && slug ? `/posts/${identifier}/${slug}/comments` : null
     )
     const [showDeleteOption, setShowDeleteOption] = useState(false)
+    const [showDeleteCommentOption, setShowDeleteCommentOption] = useState<string | null>(null);
+
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         if (newComment.trim() === "") return;
@@ -30,6 +32,15 @@ const PostPage = () => {
             });
             commentMutate();
             setNewComment("");
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const onDeleteComment = async (identifier: string) => {
+        try {
+            await axios.delete(`/posts/${post?.identifier}/${post?.slug}/comments/${identifier}`);
+            commentMutate();
         } catch (error) {
             console.log(error);
         }
@@ -217,21 +228,47 @@ const PostPage = () => {
                                                 <FaArrowDown className="text-blue-500"/> : <FaArrowDown/>}
                                         </div>
                                     </div>
-                                    <div className="py-2 pr-2">
-                                        <p className="mb-1 text-xs leading-none">
-                                            <Link href={`/u/${comment.username}`}>
-                                                <span className="mr-1 font-bold hover:underline">
-                                                    {comment.username}
+                                    <div className="py-2 pr-2 w-full">
+                                        <div className="flex items-center justify-between">
+                                            <p className="mb-1 text-xs leading-none">
+                                                <Link href={`/u/${comment.username}`}>
+                                                    <span className="mr-1 font-bold hover:underline">
+                                                        {comment.username}
+                                                    </span>
+                                                </Link>
+                                                <span className="text-gray-600">
+                                                    {`
+                                                        ${comment.voteScore}
+                                                        posts
+                                                        ${dayjs(comment.createdAt).format("YYYY-MM-DD HH:mm")}
+                                                    `}
                                                 </span>
-                                            </Link>
-                                            <span className="text-gray-600">
-                                                {`
-                                                    ${comment.voteScore}
-                                                    posts
-                                                    ${dayjs(comment.createdAt).format("YYYY-MM-DD HH:mm")}
-                                                `}
-                                            </span>
-                                        </p>
+                                            </p>
+                                            {/* 댓글 삭제 */}
+                                            {authenticated && (user?.username === comment.username) && (
+                                                <div className="relative">
+                                                    <button
+                                                        className="px-1 py-1 text-xs text-gray-400 rounded"
+                                                        onClick={() => setShowDeleteCommentOption(comment.identifier)}
+                                                    >
+                                                        <FaEllipsisV />
+                                                    </button>
+                                                    {showDeleteCommentOption === comment.identifier && (
+                                                        <div className="absolute right-0 top-full mb-1 w-32 py-2 bg-white rounded-lg shadow-xl">
+                                                            <button
+                                                                className="block w-full px-4 py-2 text-xs text-left text-gray-700 hover:bg-gray-100"
+                                                                onClick={() => {
+                                                                    onDeleteComment(comment.identifier);
+                                                                    setShowDeleteCommentOption(null);
+                                                                }}
+                                                            >
+                                                                삭제
+                                                            </button>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>                
                                         <p>{comment.body}</p>
                                     </div>
                                 </div>

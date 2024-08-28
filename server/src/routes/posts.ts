@@ -143,6 +143,35 @@ const deletePost = async (req: Request, res: Response) => {
     }
 }
 
+const deleteComment = async (req: Request, res: Response) => {
+    const {  postIdentifier, slug, commentIdentifier } = req.params;
+    const user = res.locals.user;
+
+    try {
+        const post = await Post.findOneOrFail({ where: { identifier: postIdentifier, slug } });
+        const comment = await Comment.findOneOrFail({
+            where: { identifier: commentIdentifier, postId: post.id },
+            relations: ["user", "post"]
+        });
+
+        // 댓글 작성자나 포스트 작성자만 삭제 가능
+        if (comment.user.username !== user.username && comment.post.username !== user.username) {
+            return res.status(403).json({ error: "You don't have permission to perform this action." });
+        }
+
+        // 관련 투표 삭제
+        await Vote.delete({ commentId: comment.id });
+
+        // 댓글 삭제
+        await comment.remove();
+
+        return res.json({ message: "Comment deleted successfully" });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: "Something went wrong" });
+    }
+}
+
 const router = Router();
 router.get("/:identifier/:slug", userMiddleware, getPost)
 router.post("/", userMiddleware, authMiddleware, createPost);
@@ -150,4 +179,5 @@ router.delete("/:identifier/:slug", userMiddleware, authMiddleware, deletePost);
 router.get("/", userMiddleware, getPosts)
 router.get("/:identifier/:slug/comments", userMiddleware, getPostComment);
 router.post("/:identifier/:slug/comments", userMiddleware, createPostComment);
+router.delete("/:postIdentifier/:slug/comments/:commentIdentifier", userMiddleware, authMiddleware, deleteComment);
 export default router;
