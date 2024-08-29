@@ -53,10 +53,17 @@ const PostPage = () => {
 
     const handleEditSubmit = async () => {
         try {
-            await axios.put(`/posts/${identifier}/${slug}`, { title: editedTitle, body: editedBody })
+            const response = await axios.put(`/posts/${identifier}/${slug}`, { title: editedTitle, body: editedBody })
             setIsEditing(false)
-            if (postMutate) postMutate()
-            if (commentMutate) commentMutate()
+            // slug가 변경되었다면 새로운 url로 페이지 리로드
+            if (response.data.slug !== slug) {
+                router.push(`/r/${sub}/${identifier}/${response.data.slug}`)
+            } 
+            // slug가 변경되지 않았다면 현재 페이지에서 데이터만 갱신
+            else {
+                if (postMutate) await postMutate()
+                if (commentMutate) await commentMutate()
+            }
         } catch (error) {
             console.log(error)
         }
