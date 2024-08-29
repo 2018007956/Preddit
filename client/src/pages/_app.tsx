@@ -5,7 +5,6 @@ import { useRouter } from 'next/router';
 import NavBar from '../components/NavBar';
 import { SWRConfig } from 'swr';
 import axios from 'axios';
-import Head from 'next/head';
 
 export default function App({ Component, pageProps }: AppProps) {
   axios.defaults.baseURL = process.env.NEXT_PUBLIC_SERVER_BASE_URL + "/api";

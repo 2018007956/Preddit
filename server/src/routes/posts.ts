@@ -5,6 +5,7 @@ import Sub from "../entities/Sub";
 import Post from "../entities/Post";
 import Comment from "../entities/Comment";
 import Vote from "../entities/Vote";
+import { slugify } from "../utils/helpers";
 
 const getPosts = async (req: Request, res: Response) => {
     const currentPage: number = (req.query.page || 0) as number;
@@ -172,10 +173,39 @@ const deleteComment = async (req: Request, res: Response) => {
     }
 }
 
+const updatePost = async (req: Request, res: Response) => {
+    const { identifier, slug } = req.params;
+    const { title, body } = req.body;
+    const user = res.locals.user;
+
+    try {
+        const post = await Post.findOneOrFail({
+            where: { identifier, slug },
+            relations: ["user", "sub"]
+        });
+
+        if (post.username !== user.username) {
+            return res.status(403).json({ error: "You don't have permission to edit this post." });
+        }
+
+        post.title = title;
+        post.body = body;
+        post.slug = slugify(title);
+
+        await post.save();
+
+        return res.json(post);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: "An error occurred while updating the post." });
+    }
+}
+
 const router = Router();
 router.get("/:identifier/:slug", userMiddleware, getPost)
 router.post("/", userMiddleware, authMiddleware, createPost);
 router.delete("/:identifier/:slug", userMiddleware, authMiddleware, deletePost);
+router.put("/:identifier/:slug", userMiddleware, authMiddleware, updatePost);
 router.get("/", userMiddleware, getPosts)
 router.get("/:identifier/:slug/comments", userMiddleware, getPostComment);
 router.post("/:identifier/:slug/comments", userMiddleware, createPostComment);
