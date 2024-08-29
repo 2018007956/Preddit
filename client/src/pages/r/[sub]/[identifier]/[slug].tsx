@@ -20,7 +20,7 @@ const PostPage = () => {
     const { data: comments, mutate: commentMutate } = useSWR<Comment[]>(
         identifier && slug ? `/posts/${identifier}/${slug}/comments` : null
     )
-    const [showOptions, setShowOptions] = useState(false)
+    const [showOptions, setShowOptions] = useState<Record<string, boolean>>({})
     const [isEditing, setIsEditing] = useState(false)
     const [editedTitle, setEditedTitle] = useState("")
     const [editedBody, setEditedBody] = useState("")
@@ -31,6 +31,14 @@ const PostPage = () => {
             setEditedBody(post.body)
         }
     }, [post])
+
+    const toggleOptions = (identifier: string) => {
+        setShowOptions(prev => ({
+            ...prev,
+            [identifier]: !prev[identifier]
+        }));
+    };
+    
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
@@ -48,7 +56,7 @@ const PostPage = () => {
 
     const handleEditClick = () => {
         setIsEditing(true)
-        setShowOptions(false)
+        setShowOptions({})
     }
 
     const handleEditSubmit = async () => {
@@ -160,11 +168,11 @@ const PostPage = () => {
                                             <div className="relative">
                                                 <button
                                                     className="px-1 py-1 text-xs text-gray-400 rounded"
-                                                    onClick={() => setShowOptions(!showOptions)}
+                                                    onClick={() => toggleOptions(post.identifier)}
                                                 >
                                                     <FaEllipsisV />
                                                 </button>
-                                                {showOptions && (
+                                                {showOptions[post.identifier] && (
                                                     <div className="absolute right-0 top-full mb-1 w-32 py-2 bg-white rounded-lg shadow-xl">
                                                         <button
                                                                 className="block w-full px-4 py-2 text-xs text-left text-gray-700 hover:bg-gray-100"
@@ -176,7 +184,7 @@ const PostPage = () => {
                                                             className="block w-full px-4 py-2 text-xs text-left text-gray-700 hover:bg-gray-100"
                                                             onClick={() => {
                                                                 onDelete(post.identifier, post.slug);
-                                                                setShowOptions(false);
+                                                                setShowOptions({});
                                                             }}
                                                         >
                                                             삭제
@@ -314,17 +322,17 @@ const PostPage = () => {
                                                                 <div className="relative">
                                                                     <button
                                                                         className="px-1 py-1 text-xs text-gray-400 rounded"
-                                                                        onClick={() => setShowOptions(!showOptions)}
+                                                                        onClick={() => toggleOptions(comment.identifier)}
                                                                     >
                                                                         <FaEllipsisV />
                                                                     </button>
-                                                                    {showOptions && (
+                                                                    {showOptions[comment.identifier] && (
                                                                         <div className="absolute right-0 top-full mb-1 w-32 py-2 bg-white rounded-lg shadow-xl">
                                                                             <button
                                                                                 className="block w-full px-4 py-2 text-xs text-left text-gray-700 hover:bg-gray-100"
                                                                                 onClick={() => {
                                                                                     onDeleteComment(comment.identifier);
-                                                                                    setShowOptions(false);
+                                                                                    setShowOptions({});
                                                                                 }}
                                                                             >
                                                                                 삭제
@@ -334,6 +342,7 @@ const PostPage = () => {
                                                                 </div>
                                                             )}
                                                         </div>
+                                                        <p>{comment.body}</p>
                                                     </div>
                                                 </div>
                                             ))}
