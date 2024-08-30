@@ -8,7 +8,7 @@ const api = new OpenAI({
 });
 
 const getAIResponse = async (req: Request, res: Response) => {
-    const { postId, prompt } = req.body;
+    const prompt = req.body;
     const result = await api.chat.completions.create({
         model: 'google/gemma-2-9b-it',
         messages: [

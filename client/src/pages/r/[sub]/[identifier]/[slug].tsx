@@ -45,8 +45,7 @@ const PostPage = () => {
         if (!post?.body) return;
         setIsGeneratingAI(true);
         try {
-            const response = await axios.post(`/generate-ai-response/${identifier}/${slug}`, 
-                { postId: post.identifier, prompt: post.body });
+            const response = await axios.post(`/generate-ai-response/${identifier}/${slug}`, { prompt: post.body });
             setAIResponse(response.data);
         } catch (error) {
             console.error('AI 응답 생성 중 오류 발생:', error);
