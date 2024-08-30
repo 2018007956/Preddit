@@ -4,7 +4,7 @@ import axios from 'axios';
 import dayjs from 'dayjs';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { FormEvent, useEffect, useState } from 'react';
+import React, { FormEvent, useEffect, useState } from 'react';
 import useSWR from 'swr';
 import { FaArrowDown, FaArrowUp, FaEllipsisV } from "react-icons/fa";
 
@@ -23,6 +23,9 @@ const PostPage = () => {
     const [isEditing, setIsEditing] = useState(false)
     const [editedTitle, setEditedTitle] = useState("")
     const [editedBody, setEditedBody] = useState("")
+    
+    const [aiResponse, setAIResponse] = useState("");
+    const [isGeneratingAI, setIsGeneratingAI] = useState(false);
 
     useEffect(() => {
         if (post) {
@@ -38,7 +41,32 @@ const PostPage = () => {
         }));
     };
     
+    const generateAIResponse = async () => {
+        if (!post?.body) return;
+        setIsGeneratingAI(true);
+        try {
+            const response = await axios.post(`/generate-ai-response/${identifier}/${slug}`, 
+                { postId: post.identifier, prompt: post.body });
+            setAIResponse(response.data);
+        } catch (error) {
+            console.error('AI 응답 생성 중 오류 발생:', error);
+        } finally {
+            setIsGeneratingAI(false);
+        }
+    };
 
+    const formatAIResponse = (text: string) => {
+        return text.trimEnd().split('\n').map((line, index) => (
+          <React.Fragment key={index}>
+            {line.split(/(\*\*.*?\*\*)/).map((part, i) => 
+              part.startsWith('**') && part.endsWith('**') ? 
+                <strong key={i}>{part.slice(2, -2)}</strong> : part
+            )}
+            {index < text.length - 1 && <br />}
+          </React.Fragment>
+        ));
+    };
+    
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         if (newComment.trim() === "") return;
@@ -227,6 +255,21 @@ const PostPage = () => {
                                                 <span className="my-1 text-lg font-medium">{post.title}</span>
                                             </Link>
                                             {post.body && <p className="my-1 text-sm">{post.body}</p>}
+                                            <div className="mt-2 mb-4 flex justify-end">
+                                                <button
+                                                    className="px-3 py-1.5 text-sm font-medium text-white bg-orange-500 rounded-md hover:bg-orange-600 mr-4"
+                                                    onClick={generateAIResponse}
+                                                    disabled={isGeneratingAI}
+                                                >
+                                                    {isGeneratingAI ? 'AI 답변 생성 중...' : 'AI 답변 생성'}
+                                                </button>
+                                            </div>
+                                            {aiResponse && (
+                                                <div className="mt-4 p-4 bg-gray-100 rounded-md">
+                                                    <h3 className="text-lg font-semibold mb-2 text-sm">AI 답변:</h3>
+                                                    <p className="text-sm">{formatAIResponse(aiResponse)}</p>
+                                                </div>
+                                            )}
                                             <div className="flex">
                                                 <Link href={post.url}>
                                                     <i className="mr-1 fas fa-comment-alt fa-xs"></i>

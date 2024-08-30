@@ -7,6 +7,7 @@ import subRoutes from "./routes/subs";
 import postRoutes from "./routes/posts";
 import voteRoutes from "./routes/votes";
 import userRoutes from "./routes/users";
+import aiRoutes from "./routes/ai-response";
 
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -31,6 +32,7 @@ app.use("/api/subs", subRoutes)
 app.use("/api/posts", postRoutes)
 app.use("/api/votes", voteRoutes)
 app.use("/api/users", userRoutes)
+app.use("/api/generate-ai-response", aiRoutes)
 
 app.use(express.static("public"));
 
