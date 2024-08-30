@@ -4,8 +4,7 @@ const nextConfig = {
   images:{
     domains: [
       "www.gravatar.com", 
-      "localhost",
-      "https://production-url"
+      process.env.PUBLIC_URL
     ]
   }
 };
