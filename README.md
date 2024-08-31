@@ -12,7 +12,7 @@
 |Date|Version|Functions|
 |:---:|:---:|---|
 |?|?|+ 초대된 멤버만 사용할 수 있는 private 커뮤니티<br>+ 포스트 검색|
-|2024.09.01|[0.0](http://ec2-52-79-130-248.ap-northeast-2.compute.amazonaws.com/)|+ 로그인 및 회원가입<br>+ 커뮤니티/포스트/댓글의 생성, 삭제, 수정<br>+ 포스트 내용에 대한 AI 답변 생성|
+|2024.09.01|[0.0](http://ec2-52-79-130-248.ap-northeast-2.compute.amazonaws.com/)|+ 로그인 및 회원가입<br>+ 커뮤니티/포스트/댓글 생성, 삭제, 수정<br>+ 포스트와 댓글 좋아요 싫어요<br>+ 포스트 내용에 대한 AI 답변 생성|
 
 ## Reference
 - https://www.reddit.com/
