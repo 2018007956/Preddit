@@ -1,13 +1,14 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import Home from '../src/pages/index'
 import '@testing-library/jest-dom'
 
 describe('Home', () => {
-  it('renders a heading', () => {
+  it('renders a heading', async () => {
     render(<Home />)
 
-    const heading = screen.getByText('상위 커뮤니티');
-
-    expect(heading).toBeInTheDocument()
+    await waitFor(() => {
+      const heading = screen.getByText('상위 커뮤니티');
+      expect(heading).toBeInTheDocument()
+    })
   })
 })
