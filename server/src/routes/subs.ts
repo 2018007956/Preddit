@@ -90,26 +90,29 @@ const deleteSub = async (req: Request, res: Response) => {
             relations: ["posts", "posts.votes", "posts.comments"]
         });
         
-        // Delete post's votes
-        await Vote.createQueryBuilder()
-            .delete()
-            .from(Vote)
-            .where("postId IN (:...postIds)", { postIds: community.posts.map(post => post.id) })
-            .execute();
+        const postIds = community.posts.map(post => post.id);
+        if (postIds.length > 0) {
+            // Delete post's votes
+            await Vote.createQueryBuilder()
+                .delete()
+                .from(Vote)
+                .where("postId IN (:...postIds)", { postIds })
+                .execute();
 
-        // Delete post's comments
-        await Comment.createQueryBuilder()
-            .delete()
-            .from(Comment)
-            .where("postId IN (:...postIds)", { postIds: community.posts.map(post => post.id) })
-            .execute();
+            // Delete post's comments
+            await Comment.createQueryBuilder()
+                .delete()
+                .from(Comment)
+                .where("postId IN (:...postIds)", { postIds })
+                .execute();
 
-        // Delete posts
-        await Post.createQueryBuilder()
-            .delete()
-            .from(Post)
-            .where("subName = :subName", { subName: community.name })
-            .execute();
+            // Delete posts
+            await Post.createQueryBuilder()
+                .delete()
+                .from(Post)
+                .where("subName = :subName", { subName: community.name })
+                .execute();
+        }
 
         // Delete the sub
         const sub = await Sub.createQueryBuilder()

@@ -37,7 +37,10 @@ export default function Home() {
     mutate
   } = useSWRInfinite<Post[]>(getKey);
   const isInitialLoading = !data && !error;
-  const posts: Post[] = data ? ([] as Post[]).concat(...data) : [];
+
+  const isPost = (item: any): item is Post => item && typeof item.identifier === 'string';
+  const posts: Post[] = data ? ([] as Post[]).concat(...data).filter(isPost) : [];
+
   const { data: topSubs } = useSWR<Sub[]>(address, fetcher);
   
   const [observedPost, setObservedPost] = useState("");

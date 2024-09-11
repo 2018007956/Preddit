@@ -320,7 +320,7 @@ const PostPage = () => {
                                                 }
                                             </div>
                                             {/* 댓글 리스트 부분 */}
-                                            {comments?.map(comment => (
+                                            {Array.isArray(comments) && comments?.map(comment => (
                                                 <div className="flex" key={comment.identifier}>
                                                     {/* 좋아요 싫어요 기능 부분 */}
                                                     <div className="flex-shrink-0 w-10 py-2 text-center rounded-l">
