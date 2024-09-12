@@ -74,7 +74,7 @@ const PostCard = ({
 
     return (
         <div
-            className='flex mb-4 bg-white rounded'
+            className='flex mb-4 bg-white rounded border border-gray-300'
             id={identifier}
         >
             {/* Vote */}

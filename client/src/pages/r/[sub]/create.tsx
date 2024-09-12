@@ -31,7 +31,7 @@ const PostCreate = () => {
     return (
     <div className='flex flex-col justify-center pt-16'>
             <div className='w-10/12 mx-auto md:w-96'>
-                <div className='p-4 bg-white rounded'>
+                <div className='p-4 bg-white rounded border border-gray-300'>
                     <h1 className='mb-3 text-lg'>포스트 생성하기</h1>
                     <form onSubmit={submitPost}>
                         <div className='relative mb-2'>

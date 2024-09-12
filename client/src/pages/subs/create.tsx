@@ -25,8 +25,8 @@ const SubCreate = () => {
     }
 
     return (
-        <div className="flex flex-col justify-content pt-16">
-            <div className="w-10/12 p-4 mx-auto bg-white rounded md:w-96">
+        <div className="flex flex-col justify-content pt-12">
+            <div className="w-10/12 p-4 mx-auto bg-white rounded md:w-96 border border-gray-300">
                 <h1 className="mb-2 text-lg font-medium">
                     커뮤니티 만들기
                 </h1>

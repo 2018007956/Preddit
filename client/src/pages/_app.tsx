@@ -31,7 +31,7 @@ export default function App({ Component, pageProps }: AppProps) {
         {!authRoute && <NavBar />}
         <div className="flex">
           {!authRoute && <MainSidebar />}
-          <div className={authRoute ? "w-full" : "w-full ml-64 pt-12 bg-gray-200 min-h-screen"}>
+          <div className={authRoute ? "w-full" : "w-full ml-64 pt-12 bg-white min-h-screen"}>
             <Component {...pageProps} />
           </div>
         </div>
