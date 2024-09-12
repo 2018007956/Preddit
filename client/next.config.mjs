@@ -5,7 +5,7 @@ const nextConfig = {
     domains: [
       "www.gravatar.com", 
       "localhost",
-      //public-domain
+      "preddit-on.vercel.app"
     ]
   }
 };
