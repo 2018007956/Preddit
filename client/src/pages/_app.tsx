@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import NavBar from '../components/NavBar';
 import { SWRConfig } from 'swr';
 import axios from 'axios';
+import MainSidebar from '../components/MainSidebar';
 
 export default function App({ Component, pageProps }: AppProps) {
   axios.defaults.baseURL = process.env.NEXT_PUBLIC_SERVER_BASE_URL + "/api";
@@ -28,8 +29,11 @@ export default function App({ Component, pageProps }: AppProps) {
     <SWRConfig value={{fetcher}}>
       <AuthProvider>
         {!authRoute && <NavBar />}
-        <div className={authRoute ? "" : "pt-12 bg-gray-200 min-h-screen"}>
-          <Component {...pageProps} />
+        <div className="flex">
+          {!authRoute && <MainSidebar />}
+          <div className={authRoute ? "w-full" : "w-full ml-64 pt-12 bg-gray-200 min-h-screen"}>
+            <Component {...pageProps} />
+          </div>
         </div>
       </AuthProvider>
     </SWRConfig>
