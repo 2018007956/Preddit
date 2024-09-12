@@ -126,13 +126,8 @@ const SubPage = () => {
                                         />
                                     )}
                                 </div>
-                                <div className='pt-1 pl-24'>
-                                    <div className='flex items-center'>
-                                        <h1 className='text-3xl font-bold'>{sub.title}</h1>
-                                    </div>
-                                    <p className='font-bold text-gray-400 text-small'>
-                                        /r/{sub.name}
-                                    </p>
+                                <div className='pt-2 pl-24'>
+                                    <h1 className='text-3xl font-bold'>{sub.title}</h1>
                                 </div>
                             </div>
                         </div>
