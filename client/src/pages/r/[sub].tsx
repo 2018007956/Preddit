@@ -127,7 +127,7 @@ const SubPage = () => {
                                     )}
                                 </div>
                                 <div className='pt-2 pl-24'>
-                                    <h1 className='text-3xl font-bold'>{sub.title}</h1>
+                                    <h1 className='text-3xl font-bold'>{sub.name}</h1>
                                 </div>
                             </div>
                         </div>

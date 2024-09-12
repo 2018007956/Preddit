@@ -6,16 +6,15 @@ import { FormEvent, useState } from "react";
 
 const SubCreate = () => {
     const [name, setName] = useState("");
-    const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [errors, setErrors] = useState<any>({});
     let router = useRouter();
 
     const handleSubmit = async (event: FormEvent) => {
-        event.preventDefault(); // prevent a page from being refreshed
+        event.preventDefault();
 
         try {
-            const res = await axios.post("/subs", {name, title, description})
+            const res = await axios.post("/subs", {name, description})
 
             router.push(`/r/${res.data.name}`);
         } catch (error: any) {
@@ -42,18 +41,6 @@ const SubCreate = () => {
                             value={name}
                             setValue={setName}
                             error={errors.name}
-                        />
-                    </div>
-                    <div className="my-6">
-                        <p className="font-medium">Title</p>
-                        <p className="mb-2 text-xs text-gray-400">
-                            주제를 나타냅니다. 언제든지 변경할 수 있습니다.
-                        </p>
-                        <InputGroup
-                            placeholder="제목"
-                            value={title}
-                            setValue={setTitle}
-                            error={errors.title}
                         />
                     </div>
                     <div className="my-6">

@@ -39,12 +39,11 @@ const getSub = async (req: Request, res: Response) => {
 }
 
 const createSub = async (req: Request, res: Response) => {
-    const {name, title, description} = req.body;
+    const {name, description} = req.body;
 
     try {
         let errors: any = {};
         if(isEmpty(name)) errors.name = "이름은 비워둘 수 없습니다.";
-        if(isEmpty(title)) errors.title = "제목은 비워둘 수 없습니다.";
         
         const sub = await AppDataSource.getRepository(Sub)    // select data in db using QueryBuilder
             .createQueryBuilder("sub")
@@ -68,7 +67,6 @@ const createSub = async (req: Request, res: Response) => {
         const sub = new Sub();
         sub.name = name;
         sub.description = description;
-        sub.title = title;
         sub.user = user;
 
         // 데이터베이스 저장
@@ -155,10 +153,10 @@ const topSubs = async (_: Request, res: Response) => {
                                         'https://www.gravatar.com/avatar?d=mp&f=y')`;
         const subs = await AppDataSource
             .createQueryBuilder()
-            .select(`s.title, s.name, ${imageUrlExp} as "imageUrl", count(p.id) as "postCount"`)
+            .select(`s.name, ${imageUrlExp} as "imageUrl", count(p.id) as "postCount"`)
             .from(Sub, "s")
             .leftJoin(Post, "p", `s.name = p."subName"`)
-            .groupBy('s.title, s.name, "imageUrl"')
+            .groupBy('s.name, "imageUrl"')
             .orderBy(`"postCount"`, "DESC")
             .limit(5)
             .execute();
