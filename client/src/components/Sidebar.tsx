@@ -5,6 +5,7 @@ import Link from 'next/link'
 import dayjs from 'dayjs'
 import axios from 'axios'
 import { useRouter } from 'next/router'
+import { mutate } from 'swr'
 
 type Props = {
     sub: Sub
@@ -18,6 +19,7 @@ const Sidebar = ({ sub }: Props) => {
         if (confirm("정말로 이 커뮤니티를 삭제하시겠습니까?")) {
             try {
                 await axios.delete(`/subs/${sub.name}`);
+                mutate("/subs/sub/topSubs");
                 router.push("/");
             } catch (error) {
                 console.log(error);

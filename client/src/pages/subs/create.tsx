@@ -3,6 +3,7 @@ import axios from "axios";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { FormEvent, useState } from "react";
+import { mutate } from "swr";
 
 const SubCreate = () => {
     const [name, setName] = useState("");
@@ -15,7 +16,7 @@ const SubCreate = () => {
 
         try {
             const res = await axios.post("/subs", {name, description})
-
+            mutate("/subs/sub/topSubs");
             router.push(`/r/${res.data.name}`);
         } catch (error: any) {
             console.log(error);
