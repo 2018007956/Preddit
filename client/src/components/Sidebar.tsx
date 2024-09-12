@@ -16,7 +16,7 @@ const Sidebar = ({ sub }: Props) => {
     const router = useRouter();
 
     const deleteSub = async () => {
-        if (confirm("정말로 이 커뮤니티를 삭제하시겠습니까?")) {
+        if (confirm("Are you sure you want to delete this?")) {
             try {
                 await axios.delete(`/subs/${sub.name}`);
                 mutate("/subs/sub/topSubs");
