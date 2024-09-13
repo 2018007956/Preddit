@@ -7,6 +7,8 @@ import { useRouter } from 'next/router';
 import React, { FormEvent, useEffect, useState } from 'react';
 import useSWR from 'swr';
 import { FaArrowDown, FaArrowUp, FaEllipsisV } from "react-icons/fa";
+import Login from '@/src/pages/login';
+import Register from '@/src/pages/register';
 
 const PostPage = () => {
     const router = useRouter();
@@ -26,6 +28,9 @@ const PostPage = () => {
     
     const [aiResponse, setAIResponse] = useState("");
     const [isGeneratingAI, setIsGeneratingAI] = useState(false);
+
+    const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+    const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);  
 
     useEffect(() => {
         if (post) {
@@ -65,7 +70,20 @@ const PostPage = () => {
           </React.Fragment>
         ));
     };
-    
+
+    const openLoginModal = () => {
+        setIsLoginModalOpen(true);
+        setIsRegisterModalOpen(false);
+    };
+
+    const openRegisterModal = () => {
+        setIsRegisterModalOpen(true);
+        setIsLoginModalOpen(false);
+    };
+
+    const closeLoginModal = () => setIsLoginModalOpen(false);
+    const closeRegisterModal = () => setIsRegisterModalOpen(false);
+
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         if (newComment.trim() === "") return;
@@ -260,12 +278,11 @@ const PostPage = () => {
                                                     onClick={generateAIResponse}
                                                     disabled={isGeneratingAI}
                                                 >
-                                                    {isGeneratingAI ? 'AI 답변 생성 중...' : 'AI 답변 생성'}
+                                                    {isGeneratingAI ? 'AI Replying...' : 'AI Reply'}
                                                 </button>
                                             </div>
                                             {aiResponse && (
-                                                <div className="mt-4 p-4 bg-gray-100 rounded-md">
-                                                    <h3 className="text-lg font-semibold mb-2 text-sm">AI 답변:</h3>
+                                                <div className="mt-4 p-4 bg-gray-100 rounded-md mr-8">
                                                     <p className="text-sm">{formatAIResponse(aiResponse)}</p>
                                                 </div>
                                             )}
@@ -276,19 +293,12 @@ const PostPage = () => {
                                                 </Link>
                                             </div>
                                             {/* 댓글 작성 구간 */}
-                                            <div className="pr-6 mb-4 pl-9">
+                                            <div className="pr-8 mb-2 pl-7">
                                                 {authenticated ?
                                                     (<div>
-                                                        <p className="mb-1 text-xs">
-                                                            <Link href={`/u/${user?.username}`}>
-                                                                <span className="font-semibold text-blue-500">
-                                                                    {user?.username}
-                                                                </span>
-                                                            </Link>
-                                                            {" "}으로 댓글 작성
-                                                        </p>
                                                         <form onSubmit={handleSubmit}>
                                                             <textarea
+                                                                placeholder="Add a comment"
                                                                 className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-gray-600"
                                                                 onChange={e => setNewComment(e.target.value)}
                                                                 value={newComment}
@@ -296,10 +306,10 @@ const PostPage = () => {
                                                             </textarea>
                                                             <div className="flex justify-end">
                                                                 <button
-                                                                    className="px-3 py-1 text-white bg-gray-400 rounded"
+                                                                    className="px-3 py-1 text-sm text-white bg-gray-400 rounded-full"
                                                                     disabled={newComment.trim() === ""}
                                                                 >
-                                                                    댓글 작성
+                                                                    Comment
                                                                 </button>
                                                             </div>
                                                         </form>
@@ -307,15 +317,22 @@ const PostPage = () => {
                                                     :
                                                     (<div className="flex items-center justify-between px-2 py-4 border border-gray-200 rounded">
                                                         <p className="font-semibold text-gray-400">
-                                                            댓글 작성을 위해서 로그인 해주세요.
+                                                            Please sign in to write comments.
                                                         </p>
-                                                        <div>
-                                                            <Link href={`/login`}>
-                                                                <span className="px-3 py-1 text-white bg-gray-400 rounded">
-                                                                    로그인
-                                                                </span>
-                                                            </Link>
-                                                        </div>
+                                                        <>
+                                                            <Login 
+                                                            isOpen={isLoginModalOpen}
+                                                            onClose={closeLoginModal}
+                                                            openModal={openLoginModal}
+                                                            openRegisterModal={openRegisterModal}
+                                                            />
+                                                            <Register
+                                                            isOpen={isRegisterModalOpen}
+                                                            onClose={closeRegisterModal}
+                                                            openModal={openRegisterModal}
+                                                            openLoginModal={openLoginModal}
+                                                            />
+                                                        </>
                                                     </div>)
                                                 }
                                             </div>

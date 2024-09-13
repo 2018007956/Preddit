@@ -1,12 +1,17 @@
+import React, { useState } from 'react';
 import Link from "next/link"
 import { useAuthDispatch, useAuthState } from "../context/auth";
 import axios from "axios";
 import Image from "next/image";
 import { FaSearch } from "react-icons/fa";
+import Login from '../pages/login';
+import Register from '../pages/register';
 
 const NavBar: React.FC = () => {
   const { loading, authenticated } = useAuthState();
   const dispatch = useAuthDispatch();
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
 
   const handleLogOut = () => {
     axios.post("/auth/logout")
@@ -18,6 +23,19 @@ const NavBar: React.FC = () => {
         console.log(error);
       })
   }
+
+  const openLoginModal = () => {
+    setIsLoginModalOpen(true);
+    setIsRegisterModalOpen(false);
+  };
+
+  const openRegisterModal = () => {
+    setIsRegisterModalOpen(true);
+    setIsLoginModalOpen(false);
+  };
+
+  const closeLoginModal = () => setIsLoginModalOpen(false);
+  const closeRegisterModal = () => setIsRegisterModalOpen(false);
 
   return (
     <div className="fixed inset-x-0 top-0 z-10 flex flex-col bg-white">
@@ -49,23 +67,25 @@ const NavBar: React.FC = () => {
           {!loading &&
             (authenticated ? (
               <button
-                className="w-20 px-2 mr-2 text-sm text-center text-white bg-gray-400 rounded h-7"
+                className="w-20 px-2 mr-2 text-sm text-center text-white bg-gray-400 rounded-full h-7"
                 onClick={handleLogOut}
               >
-                Logout
+                Log Out
               </button>
             ) : (
               <>
-                <Link href="/login">
-                  <span className="w-20 px-2 pt-1 mr-2 text-sm text-center text-blue-500 border border-blue-500 rounded h-7">
-                    sign in
-                  </span>
-                </Link>
-                <Link href="/register">
-                  <span className="w-20 px-2 pt-1 text-sm text-center text-white bg-gray-400 rounded h-7">
-                    sign up
-                  </span>
-                </Link>
+                <Login 
+                  isOpen={isLoginModalOpen}
+                  onClose={closeLoginModal}
+                  openModal={openLoginModal}
+                  openRegisterModal={openRegisterModal}
+                />
+                <Register 
+                  isOpen={isRegisterModalOpen}
+                  onClose={closeRegisterModal}
+                  openModal={openRegisterModal}
+                  openLoginModal={openLoginModal}
+                />
               </>
             ))}
         </div>
