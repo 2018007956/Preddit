@@ -7,11 +7,10 @@ import Modal from '../components/Modal';
 interface LoginProps {
     isOpen: boolean;
     onClose: () => void;
-    openModal: () => void;
     openRegisterModal: () => void;
 }
 
-const Login: React.FC<LoginProps> = ({ isOpen, onClose, openModal, openRegisterModal }) => {
+const Login: React.FC<LoginProps> = ({ isOpen, onClose, openRegisterModal }) => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [errors, setErrors] = useState<any>({});  
@@ -62,12 +61,9 @@ const Login: React.FC<LoginProps> = ({ isOpen, onClose, openModal, openRegisterM
     );
 
     return (
-        <>
-            <button onClick={openModal} className="w-20 px-2 py-1 mr-2 text-sm text-center text-blue-500 border border-blue-500 rounded-full h-7">Sign In</button>
-            <Modal isOpen={isOpen} onClose={onClose}>
-                {loginForm}
-            </Modal>
-        </>
+        <Modal isOpen={isOpen} onClose={onClose}>
+            {loginForm}
+        </Modal>
     )
 }
 

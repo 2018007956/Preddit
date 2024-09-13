@@ -74,10 +74,15 @@ const NavBar: React.FC = () => {
               </button>
             ) : (
               <>
+                <button
+                  className="w-20 px-2 py-1 mr-2 text-sm text-center text-blue-500 border border-blue-500 rounded-full h-7"
+                  onClick={openLoginModal}
+                >
+                  Sign In
+                </button>
                 <Login 
                   isOpen={isLoginModalOpen}
                   onClose={closeLoginModal}
-                  openModal={openLoginModal}
                   openRegisterModal={openRegisterModal}
                 />
                 <Register 

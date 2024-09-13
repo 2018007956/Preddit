@@ -131,6 +131,11 @@ const PostPage = () => {
     }
 
     const vote = async (value: number, comment?: Comment) => {
+        if (!authenticated) {
+            openLoginModal();
+            return;
+        }
+
         // 이미 클릭한 vote 버튼을 눌렀을 시에는 reset
         if (
             (!comment && value === post?.userVote) || 
@@ -178,7 +183,8 @@ const PostPage = () => {
                                         onClick={() => vote(1)}
                                     >
                                         {post.userVote === 1 ? 
-                                            <FaArrowUp className="text-red-500"/> : <FaArrowUp/>}
+                                            <FaArrowUp className="text-red-500"/> : 
+                                            <FaArrowUp className={post.voteScore && post.voteScore > 0 ? "text-red-500" : ""}/>}
                                     </div>
                                     <p className="text-xs font-bold">{post.voteScore}</p>
                                     {/* 싫어요 */}
@@ -187,7 +193,8 @@ const PostPage = () => {
                                         onClick={() => vote(-1)}
                                     >
                                         {post.userVote === -1 ? 
-                                            <FaArrowDown className="text-blue-500"/> : <FaArrowDown/>}
+                                            <FaArrowDown className="text-blue-500"/> : 
+                                            <FaArrowDown className={post.voteScore && post.voteScore < 0 ? "text-blue-500" : ""}/>}
                                     </div>
                                 </div>
                                 <div className="py-2 pr-2 w-full">
@@ -320,7 +327,6 @@ const PostPage = () => {
                                                             <Login 
                                                             isOpen={isLoginModalOpen}
                                                             onClose={closeLoginModal}
-                                                            openModal={openLoginModal}
                                                             openRegisterModal={openRegisterModal}
                                                             />
                                                             <Register
@@ -343,7 +349,8 @@ const PostPage = () => {
                                                             onClick={() => vote(1, comment)}
                                                         >
                                                             {comment.userVote === 1 ? 
-                                                                <FaArrowUp className="text-red-500"/> : <FaArrowUp/>}
+                                                                <FaArrowUp className="text-red-500"/> : 
+                                                                <FaArrowUp className={comment.voteScore > 0 ? "text-red-500" : ""}/>}
                                                         </div>
                                                         <p className="text-xs font-bold">{comment.voteScore}</p>
                                                         {/* 싫어요 */}
@@ -352,7 +359,8 @@ const PostPage = () => {
                                                             onClick={() => vote(-1, comment)}
                                                         >
                                                             {comment.userVote === -1 ? 
-                                                                <FaArrowDown className="text-blue-500"/> : <FaArrowDown/>}
+                                                                <FaArrowDown className="text-blue-500"/> : 
+                                                                <FaArrowDown className={comment.voteScore < 0 ? "text-blue-500" : ""}/>}
                                                         </div>
                                                     </div>
                                                     <div className="py-2 pr-2 w-full">

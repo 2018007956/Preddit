@@ -7,6 +7,8 @@ import dayjs from 'dayjs'
 import { useAuthState } from '../context/auth'
 import axios from 'axios'
 import { useRouter } from 'next/router'
+import Login from '../pages/login'
+import Register from '../pages/register'
 
 interface PostCardProps {
     post: Post
@@ -40,9 +42,29 @@ const PostCard = ({
     const [showOptions, setShowOptions] = useState(false)
     const [isEditing, setIsEditing] = useState(false)
     const [editedTitle, setEditedTitle] = useState(title)
-    const [editedBody, setEditedBody] = useState(body)
+    const [editedBody, setEditedBody] = useState(body) 
+    const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+    const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false); 
+
+    const openLoginModal = () => {
+        setIsLoginModalOpen(true);
+        setIsRegisterModalOpen(false);
+      };
+    
+      const openRegisterModal = () => {
+        setIsRegisterModalOpen(true);
+        setIsLoginModalOpen(false);
+      };
+    
+      const closeLoginModal = () => setIsLoginModalOpen(false);
+      const closeRegisterModal = () => setIsRegisterModalOpen(false);
 
     const vote = async (value: number) => {
+        if (!authenticated) {
+            openLoginModal();
+            return;
+        }
+
         if (value === userVote) value = 0;   // 선택 해제
 
         try {
@@ -84,7 +106,7 @@ const PostCard = ({
                 >
                     {userVote === 1 ?
                         <FaArrowUp className="text-red-500" />
-                        : <FaArrowUp />
+                        : <FaArrowUp className={voteScore && voteScore > 0 ? "text-red-500" : ""} />
                     }
                 </div>
                 <p className="text-xs font-bold">{voteScore}</p>
@@ -95,7 +117,7 @@ const PostCard = ({
                 >
                     {userVote === -1 ?
                         <FaArrowDown className="text-blue-500" />
-                        : <FaArrowDown />
+                        : <FaArrowDown className={voteScore && voteScore < 0 ? "text-blue-500" : ""} />
                     }
                 </div>
             </div>
@@ -211,6 +233,18 @@ const PostCard = ({
                 )}
 
             </div>
+            <>
+                <Login 
+                  isOpen={isLoginModalOpen}
+                  onClose={closeLoginModal}
+                  openRegisterModal={openRegisterModal}
+                />
+                <Register
+                  isOpen={isRegisterModalOpen}
+                  onClose={closeRegisterModal}
+                  openLoginModal={openLoginModal}
+                />
+              </>
         </div>
     )
 }
