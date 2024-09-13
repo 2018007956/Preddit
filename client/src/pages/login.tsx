@@ -38,6 +38,7 @@ const Login: React.FC<LoginProps> = ({ isOpen, onClose, openRegisterModal }) => 
                     value={username}
                     setValue={setUsername}
                     error={errors.username}
+                    darkMode={true}
                 />
                 <InputGroup
                     placeholder="Password"
@@ -45,6 +46,7 @@ const Login: React.FC<LoginProps> = ({ isOpen, onClose, openRegisterModal }) => 
                     type="password"
                     setValue={setPassword}
                     error={errors.password}
+                    darkMode={true}
                 />
                 <button className={`w-full py-2 mb-1 text-xs font-bold text-white bg-gray-400 border border-gray-400 rounded`}>
                     Sign In
