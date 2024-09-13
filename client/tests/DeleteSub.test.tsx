@@ -22,7 +22,6 @@ const mockSub: Sub = {
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
   name: "testSub",
-  title: "Test Sub",
   description: "for testing",
   imageUrn: "test.jpg",
   bannerUrn: "banner.jpg",

@@ -17,3 +17,7 @@ a {
 * {
   box-sizing: border-box;
 }
+
+.dark .bg-white {
+  @apply bg-gray-900;
+}

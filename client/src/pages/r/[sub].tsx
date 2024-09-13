@@ -58,9 +58,9 @@ const SubPage = () => {
 
     let renderPosts;
     if(!sub) {
-        renderPosts = <p className="text-lg text-center">로딩중...</p>;
+        renderPosts = <p className="text-lg text-center">Loading...</p>;
     } else if (sub.posts.length === 0) {
-        renderPosts = <p className='text-lg text-center'>아직 작성된 포스트가 없습니다.</p>;
+        renderPosts = <p className='text-lg text-center'>No posts have been created yet.</p>;
     } else {
         renderPosts = sub.posts.map((post: Post) => (
             <PostCard key={post.identifier} post={post} subMutate={mutate} onDelete={handlePostDelete} />
@@ -126,13 +126,8 @@ const SubPage = () => {
                                         />
                                     )}
                                 </div>
-                                <div className='pt-1 pl-24'>
-                                    <div className='flex items-center'>
-                                        <h1 className='text-3xl font-bold'>{sub.title}</h1>
-                                    </div>
-                                    <p className='font-bold text-gray-400 text-small'>
-                                        /r/{sub.name}
-                                    </p>
+                                <div className='pt-2 pl-24'>
+                                    <h1 className='text-3xl font-bold'>{sub.name}</h1>
                                 </div>
                             </div>
                         </div>

@@ -4,9 +4,11 @@ import axios from 'axios';
 import dayjs from 'dayjs';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { FormEvent, useEffect, useState } from 'react';
+import React, { FormEvent, useEffect, useState, useRef } from 'react';
 import useSWR from 'swr';
-import { FaArrowDown, FaArrowUp, FaEllipsisV } from "react-icons/fa";
+import { FaArrowDown, FaArrowUp, FaEllipsisV, FaEdit, FaTrash } from "react-icons/fa";
+import Login from '@/src/pages/login';
+import Register from '@/src/pages/register';
 
 const PostPage = () => {
     const router = useRouter();
@@ -26,6 +28,24 @@ const PostPage = () => {
     
     const [aiResponse, setAIResponse] = useState("");
     const [isGeneratingAI, setIsGeneratingAI] = useState(false);
+
+    const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+    const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);  
+
+    const optionsRef = useRef<HTMLDivElement>(null)
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (optionsRef.current && !optionsRef.current.contains(event.target as Node)) {
+                setShowOptions({})
+            }
+        }
+
+        document.addEventListener('mousedown', handleClickOutside)
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside)
+        }
+    }, [])
 
     useEffect(() => {
         if (post) {
@@ -65,7 +85,20 @@ const PostPage = () => {
           </React.Fragment>
         ));
     };
-    
+
+    const openLoginModal = () => {
+        setIsLoginModalOpen(true);
+        setIsRegisterModalOpen(false);
+    };
+
+    const openRegisterModal = () => {
+        setIsRegisterModalOpen(true);
+        setIsLoginModalOpen(false);
+    };
+
+    const closeLoginModal = () => setIsLoginModalOpen(false);
+    const closeRegisterModal = () => setIsRegisterModalOpen(false);
+
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         if (newComment.trim() === "") return;
@@ -113,8 +146,10 @@ const PostPage = () => {
     }
 
     const vote = async (value: number, comment?: Comment) => {
-        // 로그인 상태가 아니라면 login 페이지로 이동
-        if (!authenticated) router.push("/login");
+        if (!authenticated) {
+            openLoginModal();
+            return;
+        }
 
         // 이미 클릭한 vote 버튼을 눌렀을 시에는 reset
         if (
@@ -151,7 +186,7 @@ const PostPage = () => {
         <div className="flex max-w-5xl px-4 pt-5 mx-auto">
             {/* Post */}
             <div className="w-full md:mr-3 md:w-8/12">
-                <div className="bg-white rounded">
+                <div className="bg-white rounded border border-gray-300">
                     {post && (
                         <>
                             <div className="flex">
@@ -163,7 +198,8 @@ const PostPage = () => {
                                         onClick={() => vote(1)}
                                     >
                                         {post.userVote === 1 ? 
-                                            <FaArrowUp className="text-red-500"/> : <FaArrowUp/>}
+                                            <FaArrowUp className="text-red-500"/> : 
+                                            <FaArrowUp className={post.voteScore && post.voteScore > 0 ? "text-red-500" : ""}/>}
                                     </div>
                                     <p className="text-xs font-bold">{post.voteScore}</p>
                                     {/* 싫어요 */}
@@ -172,7 +208,8 @@ const PostPage = () => {
                                         onClick={() => vote(-1)}
                                     >
                                         {post.userVote === -1 ? 
-                                            <FaArrowDown className="text-blue-500"/> : <FaArrowDown/>}
+                                            <FaArrowDown className="text-blue-500"/> : 
+                                            <FaArrowDown className={post.voteScore && post.voteScore < 0 ? "text-blue-500" : ""}/>}
                                     </div>
                                 </div>
                                 <div className="py-2 pr-2 w-full">
@@ -191,7 +228,7 @@ const PostPage = () => {
                                             </Link>
                                         </p>
                                         {authenticated && (
-                                            <div className="relative">
+                                            <div className="relative" ref={optionsRef}>
                                                 <button
                                                     className="px-1 py-1 text-xs text-gray-400 rounded"
                                                     onClick={() => toggleOptions(post.identifier)}
@@ -201,19 +238,19 @@ const PostPage = () => {
                                                 {showOptions[post.identifier] && (
                                                     <div className="absolute right-0 top-full mb-1 w-32 py-2 bg-white rounded-lg shadow-xl">
                                                         <button
-                                                                className="block w-full px-4 py-2 text-xs text-left text-gray-700 hover:bg-gray-100"
+                                                                className="textColorCompat hover-bg-compat block w-full px-4 py-2 text-xs text-left flex items-center"
                                                                 onClick={handleEditClick}
                                                             >
-                                                            수정
+                                                            <FaEdit className="mr-2" /> Edit
                                                         </button>
                                                         <button
-                                                            className="block w-full px-4 py-2 text-xs text-left text-gray-700 hover:bg-gray-100"
+                                                            className="textColorCompat hover-bg-compat block w-full px-4 py-2 text-xs text-left flex items-center"
                                                             onClick={() => {
                                                                 onDelete(post.identifier, post.slug);
                                                                 setShowOptions({});
                                                             }}
                                                         >
-                                                            삭제
+                                                            <FaTrash className="mr-2" /> Delete
                                                         </button>
                                                     </div>
                                                 )}
@@ -221,30 +258,30 @@ const PostPage = () => {
                                         )}
                                     </div>
                                     {isEditing ? (
-                                        <div className="mt-2">
+                                        <div className="mt-2 mr-8">
                                             <input
                                                 type="text"
-                                                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                                className="w-full px-3 py-2 text-black border border-gray-300 rounded-md"
                                                 value={editedTitle}
                                                 onChange={(e) => setEditedTitle(e.target.value)}
                                             />
                                             <textarea
-                                                className="w-full px-3 py-2 mt-2 border border-gray-300 rounded-md"
+                                                className="w-full px-3 py-2 mt-2 text-black border border-gray-300 rounded-md"
                                                 value={editedBody}
                                                 onChange={(e) => setEditedBody(e.target.value)}
                                             />
-                                            <div className="mt-2">
+                                            <div className="mt-1 flex justify-end">
                                                 <button
-                                                    className="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600"
-                                                    onClick={handleEditSubmit}
-                                                >
-                                                    수정 완료
-                                                </button>
-                                                <button
-                                                    className="px-4 py-2 ml-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300"
+                                                    className="px-3 py-1 mr-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300"
                                                     onClick={() => setIsEditing(false)}
                                                 >
-                                                    취소
+                                                    Cancel
+                                                </button>
+                                                <button
+                                                    className="px-3 py-1 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600"
+                                                    onClick={handleEditSubmit}
+                                                >
+                                                    Save
                                                 </button>
                                             </div>
                                         </div>
@@ -260,12 +297,11 @@ const PostPage = () => {
                                                     onClick={generateAIResponse}
                                                     disabled={isGeneratingAI}
                                                 >
-                                                    {isGeneratingAI ? 'AI 답변 생성 중...' : 'AI 답변 생성'}
+                                                    {isGeneratingAI ? 'AI Replying...' : 'AI Reply'}
                                                 </button>
                                             </div>
                                             {aiResponse && (
-                                                <div className="mt-4 p-4 bg-gray-100 rounded-md">
-                                                    <h3 className="text-lg font-semibold mb-2 text-sm">AI 답변:</h3>
+                                                <div className="mt-4 p-4 bg-gray-100 rounded-md mr-8">
                                                     <p className="text-sm">{formatAIResponse(aiResponse)}</p>
                                                 </div>
                                             )}
@@ -276,30 +312,23 @@ const PostPage = () => {
                                                 </Link>
                                             </div>
                                             {/* 댓글 작성 구간 */}
-                                            <div className="pr-6 mb-4 pl-9">
+                                            <div className="pr-8 mb-2 pl-7">
                                                 {authenticated ?
                                                     (<div>
-                                                        <p className="mb-1 text-xs">
-                                                            <Link href={`/u/${user?.username}`}>
-                                                                <span className="font-semibold text-blue-500">
-                                                                    {user?.username}
-                                                                </span>
-                                                            </Link>
-                                                            {" "}으로 댓글 작성
-                                                        </p>
                                                         <form onSubmit={handleSubmit}>
                                                             <textarea
-                                                                className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-gray-600"
+                                                                placeholder="Add a comment"
+                                                                className="w-full p-3 text-black border border-gray-300 rounded focus:outline-none focus:border-gray-600"
                                                                 onChange={e => setNewComment(e.target.value)}
                                                                 value={newComment}
                                                             >
                                                             </textarea>
                                                             <div className="flex justify-end">
                                                                 <button
-                                                                    className="px-3 py-1 text-white bg-gray-400 rounded"
+                                                                    className="px-3 py-1 text-sm text-white bg-gray-400 rounded-full"
                                                                     disabled={newComment.trim() === ""}
                                                                 >
-                                                                    댓글 작성
+                                                                    Comment
                                                                 </button>
                                                             </div>
                                                         </form>
@@ -307,15 +336,20 @@ const PostPage = () => {
                                                     :
                                                     (<div className="flex items-center justify-between px-2 py-4 border border-gray-200 rounded">
                                                         <p className="font-semibold text-gray-400">
-                                                            댓글 작성을 위해서 로그인 해주세요.
+                                                            Please sign in to write comments.
                                                         </p>
-                                                        <div>
-                                                            <Link href={`/login`}>
-                                                                <span className="px-3 py-1 text-white bg-gray-400 rounded">
-                                                                    로그인
-                                                                </span>
-                                                            </Link>
-                                                        </div>
+                                                        <>
+                                                            <Login 
+                                                            isOpen={isLoginModalOpen}
+                                                            onClose={closeLoginModal}
+                                                            openRegisterModal={openRegisterModal}
+                                                            />
+                                                            <Register
+                                                            isOpen={isRegisterModalOpen}
+                                                            onClose={closeRegisterModal}
+                                                            openLoginModal={openLoginModal}
+                                                            />
+                                                        </>
                                                     </div>)
                                                 }
                                             </div>
@@ -330,7 +364,8 @@ const PostPage = () => {
                                                             onClick={() => vote(1, comment)}
                                                         >
                                                             {comment.userVote === 1 ? 
-                                                                <FaArrowUp className="text-red-500"/> : <FaArrowUp/>}
+                                                                <FaArrowUp className="text-red-500"/> : 
+                                                                <FaArrowUp className={comment.voteScore > 0 ? "text-red-500" : ""}/>}
                                                         </div>
                                                         <p className="text-xs font-bold">{comment.voteScore}</p>
                                                         {/* 싫어요 */}
@@ -339,7 +374,8 @@ const PostPage = () => {
                                                             onClick={() => vote(-1, comment)}
                                                         >
                                                             {comment.userVote === -1 ? 
-                                                                <FaArrowDown className="text-blue-500"/> : <FaArrowDown/>}
+                                                                <FaArrowDown className="text-blue-500"/> : 
+                                                                <FaArrowDown className={comment.voteScore < 0 ? "text-blue-500" : ""}/>}
                                                         </div>
                                                     </div>
                                                     <div className="py-2 pr-2 w-full">
@@ -360,7 +396,7 @@ const PostPage = () => {
                                                             </p>
                                                             {/* 댓글 삭제 */}
                                                             {authenticated && (
-                                                                <div className="relative">
+                                                                <div className="relative" ref={optionsRef}>
                                                                     <button
                                                                         className="px-1 py-1 text-xs text-gray-400 rounded"
                                                                         onClick={() => toggleOptions(comment.identifier)}
@@ -370,20 +406,20 @@ const PostPage = () => {
                                                                     {showOptions[comment.identifier] && (
                                                                         <div className="absolute right-0 top-full mb-1 w-32 py-2 bg-white rounded-lg shadow-xl">
                                                                             <button
-                                                                                className="block w-full px-4 py-2 text-xs text-left text-gray-700 hover:bg-gray-100"
+                                                                                className="textColorCompat hover-bg-compat block w-full px-4 py-2 text-xs text-left flex items-center"
                                                                                 onClick={() => {
                                                                                     onDeleteComment(comment.identifier);
                                                                                     setShowOptions({});
                                                                                 }}
                                                                             >
-                                                                                삭제
+                                                                                <FaTrash className="mr-2" /> Delete
                                                                             </button>
                                                                         </div>
                                                                     )}
                                                                 </div>
                                                             )}
                                                         </div>
-                                                        <p>{comment.body}</p>
+                                                        <p className="text-sm mr-6">{comment.body}</p>
                                                     </div>
                                                 </div>
                                             ))}

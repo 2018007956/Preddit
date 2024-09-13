@@ -1,12 +1,14 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { Post } from '../types'
-import { FaArrowDown, FaArrowUp, FaEllipsisV } from 'react-icons/fa'
+import { FaArrowDown, FaArrowUp, FaEdit, FaEllipsisV, FaTrash } from 'react-icons/fa'
 import Link from 'next/link'
 import Image from 'next/image'
 import dayjs from 'dayjs'
 import { useAuthState } from '../context/auth'
 import axios from 'axios'
 import { useRouter } from 'next/router'
+import Login from '../pages/login'
+import Register from '../pages/register'
 
 interface PostCardProps {
     post: Post
@@ -40,11 +42,44 @@ const PostCard = ({
     const [showOptions, setShowOptions] = useState(false)
     const [isEditing, setIsEditing] = useState(false)
     const [editedTitle, setEditedTitle] = useState(title)
-    const [editedBody, setEditedBody] = useState(body)
+    const [editedBody, setEditedBody] = useState(body) 
+    const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+    const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false); 
+    const optionsRef = useRef<HTMLDivElement>(null);
+
+    // 외부 클릭을 감지하는 이벤트 리스터 설정
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (optionsRef.current && !optionsRef.current.contains(event.target as Node)) {
+                setShowOptions(false)
+            }
+        }
+
+        document.addEventListener('mousedown', handleClickOutside)
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside)
+        }
+    }, [])
+
+    const openLoginModal = () => {
+        setIsLoginModalOpen(true);
+        setIsRegisterModalOpen(false);
+      };
+    
+      const openRegisterModal = () => {
+        setIsRegisterModalOpen(true);
+        setIsLoginModalOpen(false);
+      };
+    
+      const closeLoginModal = () => setIsLoginModalOpen(false);
+      const closeRegisterModal = () => setIsRegisterModalOpen(false);
 
     const vote = async (value: number) => {
-        if (!authenticated) router.push('/login');
-        
+        if (!authenticated) {
+            openLoginModal();
+            return;
+        }
+
         if (value === userVote) value = 0;   // 선택 해제
 
         try {
@@ -74,7 +109,7 @@ const PostCard = ({
 
     return (
         <div
-            className='flex mb-4 bg-white rounded'
+            className='flex mb-4 bg-white rounded border border-gray-300'
             id={identifier}
         >
             {/* Vote */}
@@ -86,7 +121,7 @@ const PostCard = ({
                 >
                     {userVote === 1 ?
                         <FaArrowUp className="text-red-500" />
-                        : <FaArrowUp />
+                        : <FaArrowUp className={voteScore && voteScore > 0 ? "text-red-500" : ""} />
                     }
                 </div>
                 <p className="text-xs font-bold">{voteScore}</p>
@@ -97,7 +132,7 @@ const PostCard = ({
                 >
                     {userVote === -1 ?
                         <FaArrowDown className="text-blue-500" />
-                        : <FaArrowDown />
+                        : <FaArrowDown className={voteScore && voteScore < 0 ? "text-blue-500" : ""} />
                     }
                 </div>
             </div>
@@ -139,7 +174,7 @@ const PostCard = ({
                     </div>
 
                     {authenticated && (
-                        <div className="relative">
+                        <div className="relative" ref={optionsRef}>
                             <button
                                 className="px-1 py-1 text-xs text-gray-400 rounded"
                                 onClick={() => setShowOptions(!showOptions)}
@@ -149,19 +184,19 @@ const PostCard = ({
                             {showOptions && (
                                 <div className="absolute right-0 top-full mb-1 w-32 py-2 bg-white rounded-lg shadow-xl">
                                     <button
-                                        className="block w-full px-4 py-2 text-xs text-left text-gray-700 hover:bg-gray-100"
+                                        className="textColorCompat hover-bg-compat block w-full px-4 py-2 text-xs text-left flex items-center"
                                         onClick={handleEditClick}
                                     >
-                                        수정
+                                        <FaEdit className="mr-2" /> Edit
                                     </button>
                                     <button
-                                        className="block w-full px-4 py-2 text-xs text-left text-gray-700 hover:bg-gray-100"
+                                        className="textColorCompat hover-bg-compat block w-full px-4 py-2 text-xs text-left flex items-center"
                                         onClick={() => {
                                             onDelete(identifier, slug);
                                             setShowOptions(false);
                                         }}
                                     >
-                                        삭제
+                                        <FaTrash className="mr-2" /> Delete
                                     </button>
                                 </div>
                             )}
@@ -170,30 +205,30 @@ const PostCard = ({
                 </div>
 
                 {isEditing ? (
-                    <div className="mt-2">
+                    <div className="mt-2 mr-8">
                         <input
                             type="text"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                            className="w-full px-3 py-2 text-black border border-gray-300 rounded-md"
                             value={editedTitle}
                             onChange={(e) => setEditedTitle(e.target.value)}
                         />
                         <textarea
-                            className="w-full px-3 py-2 mt-2 border border-gray-300 rounded-md"
+                            className="w-full px-3 py-2 mt-2 text-black border border-gray-300 rounded-md"
                             value={editedBody}
                             onChange={(e) => setEditedBody(e.target.value)}
                         />
-                        <div className="mt-2">
+                        <div className="mt-1 flex justify-end">
                             <button
-                                className="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600"
-                                onClick={handleEditSubmit}
-                            >
-                                수정 완료
-                            </button>
-                            <button
-                                className="px-4 py-2 ml-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300"
+                                className="px-3 py-1 mr-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300"
                                 onClick={() => setIsEditing(false)}
                             >
-                                취소
+                                Cancel
+                            </button>
+                            <button
+                                className="px-3 py-1 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600"
+                                onClick={handleEditSubmit}
+                            >
+                                Save
                             </button>
                         </div>
                     </div>
@@ -213,6 +248,18 @@ const PostCard = ({
                 )}
 
             </div>
+            <>
+                <Login 
+                  isOpen={isLoginModalOpen}
+                  onClose={closeLoginModal}
+                  openRegisterModal={openRegisterModal}
+                />
+                <Register
+                  isOpen={isRegisterModalOpen}
+                  onClose={closeRegisterModal}
+                  openLoginModal={openLoginModal}
+                />
+            </>
         </div>
     )
 }

@@ -1,66 +1,71 @@
 import React, { FormEvent, useState } from 'react'
 import axios from 'axios';
-import Link from 'next/link'
-import { useRouter } from 'next/router';
 import InputGroup from '../components/InputGroup'
-import { useAuthDispatch, useAuthState } from '../context/auth';
+import { useAuthDispatch } from '../context/auth';
+import Modal from '../components/Modal';
 
-const Login = () => {
-    let router = useRouter();
+interface LoginProps {
+    isOpen: boolean;
+    onClose: () => void;
+    openRegisterModal: () => void;
+}
+
+const Login: React.FC<LoginProps> = ({ isOpen, onClose, openRegisterModal }) => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [errors, setErrors] = useState<any>({});  
     const dispatch = useAuthDispatch();
-    const {authenticated} = useAuthState();
     
-    if(authenticated) router.push("/");
-
     const handleSubmit = async (event: FormEvent) => {
         event.preventDefault();
 
         try {
             const res = await axios.post('/auth/login', { password, username }, { withCredentials: true });
             dispatch("LOGIN", res.data?.user); // save user data into context
-            router.push("/"); // move main page after login
+            onClose(); // Close the modal after successful login
         } catch (error: any) {
             console.log('error', error);
             setErrors(error?.response?.data || {});
         }
-        
     } 
 
-    return (
-        <div className="bg-white">
-            <div className="flex flex-col items-center justify-content h-screen p-6">
-                <div className="w-10/12 mx-auto md:w-96">
-                    <h1 className="mb-2 text-lg font-medium">로그인</h1>
-                    <form onSubmit={handleSubmit}>
-                        <InputGroup
-                            placeholder="Username"
-                            value={username}
-                            setValue={setUsername}
-                            error={errors.username}
-                        />
-                        <InputGroup
-                            placeholder="Password"
-                            value={password}
-                            type="password"
-                            setValue={setPassword}
-                            error={errors.password}
-                        />
-                        <button className={`w-full py-2 mb-1 text-xs font-bold text-white uppercase bg-gray-400 border border-gray-400 rounded`}>
-                            Sign In
-                        </button>
-                    </form>
-                    <small>
-                        아직 아이디가 없나요?
-                        <Link href="/register">
-                            <span className="ml-1 text-blue-500 uppercase">회원가입</span>
-                        </Link>
-                    </small>
-                </div>
-            </div>
+    const loginForm = (
+        <div className="w-full">
+            <h1 className="mb-2 text-lg font-medium">Sign In</h1>
+            <form onSubmit={handleSubmit}>
+                <InputGroup
+                    placeholder="Username"
+                    value={username}
+                    setValue={setUsername}
+                    error={errors.username}
+                    darkMode={true}
+                />
+                <InputGroup
+                    placeholder="Password"
+                    value={password}
+                    type="password"
+                    setValue={setPassword}
+                    error={errors.password}
+                    darkMode={true}
+                />
+                <button className={`w-full py-2 mb-1 text-xs font-bold text-white bg-gray-400 border border-gray-400 rounded`}>
+                    Sign In
+                </button>
+            </form>
+            <small>
+                New to Preddit?
+                <span className="ml-1 text-blue-500 cursor-pointer" onClick={() => {
+                    onClose();
+                    openRegisterModal();
+                }}>Sign Up</span>
+            </small>
         </div>
+    );
+
+    return (
+        <Modal isOpen={isOpen} onClose={onClose}>
+            {loginForm}
+        </Modal>
     )
 }
 

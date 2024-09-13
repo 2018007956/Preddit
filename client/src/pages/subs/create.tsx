@@ -3,20 +3,20 @@ import axios from "axios";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { FormEvent, useState } from "react";
+import { mutate } from "swr";
 
 const SubCreate = () => {
     const [name, setName] = useState("");
-    const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [errors, setErrors] = useState<any>({});
     let router = useRouter();
 
     const handleSubmit = async (event: FormEvent) => {
-        event.preventDefault(); // prevent a page from being refreshed
+        event.preventDefault();
 
         try {
-            const res = await axios.post("/subs", {name, title, description})
-
+            const res = await axios.post("/subs", {name, description})
+            mutate("/subs/sub/topSubs");
             router.push(`/r/${res.data.name}`);
         } catch (error: any) {
             console.log(error);
@@ -25,52 +25,35 @@ const SubCreate = () => {
     }
 
     return (
-        <div className="flex flex-col justify-content pt-16">
-            <div className="w-10/12 p-4 mx-auto bg-white rounded md:w-96">
-                <h1 className="mb-2 text-lg font-medium">
-                    커뮤니티 만들기
+        <div className="flex pl-60 pt-24">
+            <div className="w-[500px] p-4 bg-white rounded border border-gray-300">
+                <h1 className="mb-1 text-lg font-medium">
+                    Tell us about your community
                 </h1>
+                <p className="mb-2 text-xs text-gray-400">
+                    A name and description help people understand what your community is all about
+                </p>
                 <hr />
                 <form onSubmit={handleSubmit}>
                     <div className="my-6">
-                        <p className="font-medium">Name</p>
-                        <p className="mb-2 text-xs text-gray-400">
-                            커뮤니티 이름은 번경할 수 없습니다.
-                        </p>
                         <InputGroup
-                            placeholder="이름"
+                            placeholder="Community name"
                             value={name}
                             setValue={setName}
                             error={errors.name}
                         />
                     </div>
                     <div className="my-6">
-                        <p className="font-medium">Title</p>
-                        <p className="mb-2 text-xs text-gray-400">
-                            주제를 나타냅니다. 언제든지 변경할 수 있습니다.
-                        </p>
                         <InputGroup
-                            placeholder="제목"
-                            value={title}
-                            setValue={setTitle}
-                            error={errors.title}
-                        />
-                    </div>
-                    <div className="my-6">
-                        <p className="font-medium">Description</p>
-                        <p className="mb-2 text-xs text-gray-400">
-                            해당 커뮤니티에 대한 설명입니다.
-                        </p>
-                        <InputGroup
-                            placeholder="설명"
+                            placeholder="Description"
                             value={description}
                             setValue={setDescription}
                             error={errors.description}
                         />
                     </div>
                     <div className="flex justify-end">
-                        <button className="px-4 py-1 text-sm font-semibold rounded text-white bg-gray-400 border">
-                            커뮤니티 만들기
+                        <button className="px-4 py-1 text-sm font-semibold rounded-full text-white bg-gray-400 border">
+                            Create Community
                         </button>
                     </div>
                 </form>

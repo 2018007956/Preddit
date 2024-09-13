@@ -8,6 +8,7 @@ interface InputGroupProps {
     value: string;
     error: string | undefined;
     setValue: (str: string) => void;
+    darkMode?: boolean;
 }
 
 const InputGroup: React.FC<InputGroupProps> = ({
@@ -16,14 +17,15 @@ const InputGroup: React.FC<InputGroupProps> = ({
     placeholder = "",
     error,
     value,
-    setValue
+    setValue,
+    darkMode = false
 }) => {
   return (
     <div className={className}>
         <input 
             type={type}
             style={{minWidth: 300}}
-            className={cls(`w-full p-3 transition duration-200 border border-gray-400 rounded bg-gray-50 focus:bg-white hover:bg-white`,
+            className={cls(`w-full p-3 transition duration-200 border border-gray-300 rounded outline-none bg-gray-50 focus:bg-white hover:bg-white ${darkMode ? 'text-black' : ''}`,
                 {
                     "border-red-500": error
                 }
