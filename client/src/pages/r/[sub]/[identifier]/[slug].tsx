@@ -131,9 +131,6 @@ const PostPage = () => {
     }
 
     const vote = async (value: number, comment?: Comment) => {
-        // 로그인 상태가 아니라면 login 페이지로 이동
-        if (!authenticated) router.push("/login");
-
         // 이미 클릭한 vote 버튼을 눌렀을 시에는 reset
         if (
             (!comment && value === post?.userVote) || 
@@ -329,7 +326,6 @@ const PostPage = () => {
                                                             <Register
                                                             isOpen={isRegisterModalOpen}
                                                             onClose={closeRegisterModal}
-                                                            openModal={openRegisterModal}
                                                             openLoginModal={openLoginModal}
                                                             />
                                                         </>

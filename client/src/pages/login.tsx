@@ -1,8 +1,7 @@
 import React, { FormEvent, useState } from 'react'
 import axios from 'axios';
-import { useRouter } from 'next/router';
 import InputGroup from '../components/InputGroup'
-import { useAuthDispatch, useAuthState } from '../context/auth';
+import { useAuthDispatch } from '../context/auth';
 import Modal from '../components/Modal';
 
 interface LoginProps {
@@ -13,13 +12,11 @@ interface LoginProps {
 }
 
 const Login: React.FC<LoginProps> = ({ isOpen, onClose, openModal, openRegisterModal }) => {
-    let router = useRouter();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [errors, setErrors] = useState<any>({});  
     const dispatch = useAuthDispatch();
-    const {authenticated} = useAuthState();
-
+    
     const handleSubmit = async (event: FormEvent) => {
         event.preventDefault();
 

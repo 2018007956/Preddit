@@ -83,7 +83,6 @@ const NavBar: React.FC = () => {
                 <Register 
                   isOpen={isRegisterModalOpen}
                   onClose={closeRegisterModal}
-                  openModal={openRegisterModal}
                   openLoginModal={openLoginModal}
                 />
               </>

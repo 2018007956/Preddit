@@ -1,20 +1,11 @@
-import Link from "next/link"
-import useSWR from "swr";
-import { Post, Sub } from "../types";
+import { Post } from "../types";
 import axios from "axios";
-import Image from "next/image";
-import { useAuthState } from "../context/auth";
 import useSWRInfinite from "swr/infinite";
 import PostCard from "../components/PostCard";
 import { useEffect, useState } from "react";
 import MainSidebar from "../components/MainSidebar";
 
 export default function Home() {
-  const { authenticated } = useAuthState();
-  const fetcher = async (url: string) =>
-    await axios.get(url).then(res => res.data);
-  const address = "/subs/sub/topSubs";
-
   const getKey = (pageIndex: number, previousPageData: Post[]) => {
     if (previousPageData && !previousPageData.length) return null
     return `/posts?page=${pageIndex}`;
@@ -41,8 +32,6 @@ export default function Home() {
 
   const isPost = (item: any): item is Post => item && typeof item.identifier === 'string';
   const posts: Post[] = data ? ([] as Post[]).concat(...data).filter(isPost) : [];
-
-  const { data: topSubs } = useSWR<Sub[]>(address, fetcher);
   
   const [observedPost, setObservedPost] = useState("");
 
@@ -88,7 +77,7 @@ export default function Home() {
       </div>
 
       {/* 포스트 리스트 */}
-      <div className='ml-50 w-[calc(100%-26rem)] px-4 py-5'>  
+      <div className='ml-50 w-[calc(100%-26rem)] px-4 py-5 ml-2'>  
         {isInitialLoading && <p className="text-lg text-center">Loading...</p>}
         {posts?.map((post) => (
           <PostCard

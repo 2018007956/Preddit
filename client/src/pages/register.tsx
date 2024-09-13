@@ -1,26 +1,19 @@
 import axios from 'axios';
-import Link from 'next/link'
-import { useRouter } from 'next/router';
 import React, { FormEvent, useState } from 'react'
 import InputGroup from '../components/InputGroup'
-import { useAuthState } from '../context/auth';
 import Modal from '../components/Modal';
 
 interface RegisterProps {
     isOpen: boolean;
     onClose: () => void;
-    openModal: () => void;
     openLoginModal: () => void;
 }
 
-const Register: React.FC<RegisterProps> = ({ isOpen, onClose, openModal, openLoginModal }) => {
+const Register: React.FC<RegisterProps> = ({ isOpen, onClose, openLoginModal }) => {
     const [email, setEmail] = useState("");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [errors, setErrors] = useState<any>({});    
-    const {authenticated} = useAuthState();
-
-    let router = useRouter();
+    const [errors, setErrors] = useState<any>({});
 
     const handleSubmit = async (event: FormEvent) => {
         event.preventDefault();

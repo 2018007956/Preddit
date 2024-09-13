@@ -43,8 +43,6 @@ const PostCard = ({
     const [editedBody, setEditedBody] = useState(body)
 
     const vote = async (value: number) => {
-        if (!authenticated) router.push('/login');
-        
         if (value === userVote) value = 0;   // 선택 해제
 
         try {
