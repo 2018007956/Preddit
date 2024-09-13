@@ -62,7 +62,7 @@ const UserPage = () => {
                                         </Link>
                                     </p>
                                     <hr />
-                                    <p className="p-1">{comment.body}</p>
+                                    <p className="p-1 text-sm mr-3">{comment.body}</p>
                                 </div>
                             </div>
                         )

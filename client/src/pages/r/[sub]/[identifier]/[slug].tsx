@@ -404,7 +404,7 @@ const PostPage = () => {
                                                                 </div>
                                                             )}
                                                         </div>
-                                                        <p>{comment.body}</p>
+                                                        <p className="text-sm mr-6">{comment.body}</p>
                                                     </div>
                                                 </div>
                                             ))}

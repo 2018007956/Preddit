@@ -244,7 +244,7 @@ const PostCard = ({
                   onClose={closeRegisterModal}
                   openLoginModal={openLoginModal}
                 />
-              </>
+            </>
         </div>
     )
 }
