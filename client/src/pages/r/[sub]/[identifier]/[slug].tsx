@@ -243,7 +243,7 @@ const PostPage = () => {
                                         )}
                                     </div>
                                     {isEditing ? (
-                                        <div className="mt-2">
+                                        <div className="mt-2 mr-8">
                                             <input
                                                 type="text"
                                                 className="w-full px-3 py-2 text-black border border-gray-300 rounded-md"
@@ -255,18 +255,18 @@ const PostPage = () => {
                                                 value={editedBody}
                                                 onChange={(e) => setEditedBody(e.target.value)}
                                             />
-                                            <div className="mt-2">
+                                            <div className="mt-1 flex justify-end">
                                                 <button
-                                                    className="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600"
-                                                    onClick={handleEditSubmit}
-                                                >
-                                                    수정 완료
-                                                </button>
-                                                <button
-                                                    className="px-4 py-2 ml-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300"
+                                                    className="px-3 py-1 mr-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300"
                                                     onClick={() => setIsEditing(false)}
                                                 >
-                                                    취소
+                                                    Cancel
+                                                </button>
+                                                <button
+                                                    className="px-3 py-1 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600"
+                                                    onClick={handleEditSubmit}
+                                                >
+                                                    Save
                                                 </button>
                                             </div>
                                         </div>
