@@ -24,7 +24,7 @@ const UserPage = () => {
 
     if (!data) return null;
     return (
-        <div className="flex max-w-5xl px-4 pt-5 mx-auto">
+        <div className="commentsInUserPage flex max-w-5xl px-4 pt-5 mx-auto">
             {/* 유저 포스트 댓글 리스트 */}
             <div className='w-full md:mr-3 md:w-8/12'>
                 {data.userData.map((data: any) => {

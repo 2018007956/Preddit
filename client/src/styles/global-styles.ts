@@ -24,6 +24,17 @@ export const GlobalStyles = createGlobalStyle`
         background-color: #2d3748;
       }
     }
+    .commentsInUserPage {
+      .bg-gray-100 {
+        background-color: #2d3748;
+      }
+      .text-gray-500 {
+        color: #C7C8CC;
+      }
+      .text-black {
+        color: #C7C8CC;
+      }
+    }
   }
 
   .light {
