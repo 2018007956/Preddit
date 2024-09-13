@@ -4,7 +4,7 @@ import axios from 'axios';
 import dayjs from 'dayjs';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { FormEvent, useEffect, useState } from 'react';
+import React, { FormEvent, useEffect, useState, useRef } from 'react';
 import useSWR from 'swr';
 import { FaArrowDown, FaArrowUp, FaEllipsisV } from "react-icons/fa";
 import Login from '@/src/pages/login';
@@ -31,6 +31,21 @@ const PostPage = () => {
 
     const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
     const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);  
+
+    const optionsRef = useRef<HTMLDivElement>(null)
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (optionsRef.current && !optionsRef.current.contains(event.target as Node)) {
+                setShowOptions({})
+            }
+        }
+
+        document.addEventListener('mousedown', handleClickOutside)
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside)
+        }
+    }, [])
 
     useEffect(() => {
         if (post) {
@@ -213,7 +228,7 @@ const PostPage = () => {
                                             </Link>
                                         </p>
                                         {authenticated && (
-                                            <div className="relative">
+                                            <div className="relative" ref={optionsRef}>
                                                 <button
                                                     className="px-1 py-1 text-xs text-gray-400 rounded"
                                                     onClick={() => toggleOptions(post.identifier)}
@@ -381,7 +396,7 @@ const PostPage = () => {
                                                             </p>
                                                             {/* 댓글 삭제 */}
                                                             {authenticated && (
-                                                                <div className="relative">
+                                                                <div className="relative" ref={optionsRef}>
                                                                     <button
                                                                         className="px-1 py-1 text-xs text-gray-400 rounded"
                                                                         onClick={() => toggleOptions(comment.identifier)}

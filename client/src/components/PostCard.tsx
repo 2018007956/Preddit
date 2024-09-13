@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { Post } from '../types'
 import { FaArrowDown, FaArrowUp, FaEllipsisV } from 'react-icons/fa'
 import Link from 'next/link'
@@ -45,6 +45,21 @@ const PostCard = ({
     const [editedBody, setEditedBody] = useState(body) 
     const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
     const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false); 
+    const optionsRef = useRef<HTMLDivElement>(null);
+
+    // 외부 클릭을 감지하는 이벤트 리스터 설정
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (optionsRef.current && !optionsRef.current.contains(event.target as Node)) {
+                setShowOptions(false)
+            }
+        }
+
+        document.addEventListener('mousedown', handleClickOutside)
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside)
+        }
+    }, [])
 
     const openLoginModal = () => {
         setIsLoginModalOpen(true);
@@ -159,7 +174,7 @@ const PostCard = ({
                     </div>
 
                     {authenticated && (
-                        <div className="relative">
+                        <div className="relative" ref={optionsRef}>
                             <button
                                 className="px-1 py-1 text-xs text-gray-400 rounded"
                                 onClick={() => setShowOptions(!showOptions)}
