@@ -223,13 +223,13 @@ const PostPage = () => {
                                                 {showOptions[post.identifier] && (
                                                     <div className="absolute right-0 top-full mb-1 w-32 py-2 bg-white rounded-lg shadow-xl">
                                                         <button
-                                                                className="block w-full px-4 py-2 text-xs text-left text-gray-700 hover:bg-gray-100"
+                                                                className="textColorCompat block w-full px-4 py-2 text-xs text-left hover:bg-gray-100"
                                                                 onClick={handleEditClick}
                                                             >
                                                             수정
                                                         </button>
                                                         <button
-                                                            className="block w-full px-4 py-2 text-xs text-left text-gray-700 hover:bg-gray-100"
+                                                            className="textColorCompat block w-full px-4 py-2 text-xs text-left hover:bg-gray-100"
                                                             onClick={() => {
                                                                 onDelete(post.identifier, post.slug);
                                                                 setShowOptions({});
@@ -246,12 +246,12 @@ const PostPage = () => {
                                         <div className="mt-2">
                                             <input
                                                 type="text"
-                                                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                                className="w-full px-3 py-2 text-black border border-gray-300 rounded-md"
                                                 value={editedTitle}
                                                 onChange={(e) => setEditedTitle(e.target.value)}
                                             />
                                             <textarea
-                                                className="w-full px-3 py-2 mt-2 border border-gray-300 rounded-md"
+                                                className="w-full px-3 py-2 mt-2 text-black border border-gray-300 rounded-md"
                                                 value={editedBody}
                                                 onChange={(e) => setEditedBody(e.target.value)}
                                             />
@@ -303,7 +303,7 @@ const PostPage = () => {
                                                         <form onSubmit={handleSubmit}>
                                                             <textarea
                                                                 placeholder="Add a comment"
-                                                                className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-gray-600"
+                                                                className="w-full p-3 text-black border border-gray-300 rounded focus:outline-none focus:border-gray-600"
                                                                 onChange={e => setNewComment(e.target.value)}
                                                                 value={newComment}
                                                             >
@@ -391,7 +391,7 @@ const PostPage = () => {
                                                                     {showOptions[comment.identifier] && (
                                                                         <div className="absolute right-0 top-full mb-1 w-32 py-2 bg-white rounded-lg shadow-xl">
                                                                             <button
-                                                                                className="block w-full px-4 py-2 text-xs text-left text-gray-700 hover:bg-gray-100"
+                                                                                className="textColorCompat block w-full px-4 py-2 text-xs text-left hover:bg-gray-100"
                                                                                 onClick={() => {
                                                                                     onDeleteComment(comment.identifier);
                                                                                     setShowOptions({});

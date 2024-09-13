@@ -11,6 +11,11 @@ export const GlobalStyles = createGlobalStyle`
     background-color: #1a202c !important;
     color: #f7fafc;
     
+    .textColorCompat {
+      .text-gray-700 {
+        color: #C7C8CC;
+      }
+    }
     .sidebar {
       .bg-gray-100 {
         background-color: #2d3748;

@@ -169,13 +169,13 @@ const PostCard = ({
                             {showOptions && (
                                 <div className="absolute right-0 top-full mb-1 w-32 py-2 bg-white rounded-lg shadow-xl">
                                     <button
-                                        className="block w-full px-4 py-2 text-xs text-left text-gray-700 hover:bg-gray-100"
+                                        className="textColorCompat block w-full px-4 py-2 text-xs text-left hover:bg-gray-100"
                                         onClick={handleEditClick}
                                     >
                                         수정
                                     </button>
                                     <button
-                                        className="block w-full px-4 py-2 text-xs text-left text-gray-700 hover:bg-gray-100"
+                                        className="textColorCompat block w-full px-4 py-2 text-xs text-left hover:bg-gray-100"
                                         onClick={() => {
                                             onDelete(identifier, slug);
                                             setShowOptions(false);
