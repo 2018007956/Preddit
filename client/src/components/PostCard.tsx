@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { Post } from '../types'
-import { FaArrowDown, FaArrowUp, FaEllipsisV } from 'react-icons/fa'
+import { FaArrowDown, FaArrowUp, FaEdit, FaEllipsisV, FaTrash } from 'react-icons/fa'
 import Link from 'next/link'
 import Image from 'next/image'
 import dayjs from 'dayjs'
@@ -184,19 +184,19 @@ const PostCard = ({
                             {showOptions && (
                                 <div className="absolute right-0 top-full mb-1 w-32 py-2 bg-white rounded-lg shadow-xl">
                                     <button
-                                        className="textColorCompat block w-full px-4 py-2 text-xs text-left hover:bg-gray-100"
+                                        className="textColorCompat hover-bg-compat block w-full px-4 py-2 text-xs text-left flex items-center"
                                         onClick={handleEditClick}
                                     >
-                                        수정
+                                        <FaEdit className="mr-2" /> Edit
                                     </button>
                                     <button
-                                        className="textColorCompat block w-full px-4 py-2 text-xs text-left hover:bg-gray-100"
+                                        className="textColorCompat hover-bg-compat block w-full px-4 py-2 text-xs text-left flex items-center"
                                         onClick={() => {
                                             onDelete(identifier, slug);
                                             setShowOptions(false);
                                         }}
                                     >
-                                        삭제
+                                        <FaTrash className="mr-2" /> Delete
                                     </button>
                                 </div>
                             )}

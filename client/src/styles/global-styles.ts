@@ -8,13 +8,16 @@ export const GlobalStyles = createGlobalStyle`
   }
 
   .dark {
-    background-color: #1a202c !important;
+    background-color: #1a202c;
     color: #f7fafc;
-    
+
     .textColorCompat {
       .text-gray-700 {
         color: #C7C8CC;
       }
+    }
+    .hover-bg-compat:hover {
+      background-color: #1F2937;
     }
     .sidebar {
       .bg-gray-100 {
@@ -45,5 +48,9 @@ export const GlobalStyles = createGlobalStyle`
   .light {
     background-color: #f7fafc;
     color: #1a202c;
+
+    .hover-bg-compat:hover {
+      background-color: #edf2f7;
+    }
   }
 `;

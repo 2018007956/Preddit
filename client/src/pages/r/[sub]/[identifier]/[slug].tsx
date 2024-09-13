@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { FormEvent, useEffect, useState, useRef } from 'react';
 import useSWR from 'swr';
-import { FaArrowDown, FaArrowUp, FaEllipsisV } from "react-icons/fa";
+import { FaArrowDown, FaArrowUp, FaEllipsisV, FaEdit, FaTrash } from "react-icons/fa";
 import Login from '@/src/pages/login';
 import Register from '@/src/pages/register';
 
@@ -238,19 +238,19 @@ const PostPage = () => {
                                                 {showOptions[post.identifier] && (
                                                     <div className="absolute right-0 top-full mb-1 w-32 py-2 bg-white rounded-lg shadow-xl">
                                                         <button
-                                                                className="textColorCompat block w-full px-4 py-2 text-xs text-left hover:bg-gray-100"
+                                                                className="textColorCompat hover-bg-compat block w-full px-4 py-2 text-xs text-left flex items-center"
                                                                 onClick={handleEditClick}
                                                             >
-                                                            수정
+                                                            <FaEdit className="mr-2" /> Edit
                                                         </button>
                                                         <button
-                                                            className="textColorCompat block w-full px-4 py-2 text-xs text-left hover:bg-gray-100"
+                                                            className="textColorCompat hover-bg-compat block w-full px-4 py-2 text-xs text-left flex items-center"
                                                             onClick={() => {
                                                                 onDelete(post.identifier, post.slug);
                                                                 setShowOptions({});
                                                             }}
                                                         >
-                                                            삭제
+                                                            <FaTrash className="mr-2" /> Delete
                                                         </button>
                                                     </div>
                                                 )}
@@ -406,13 +406,13 @@ const PostPage = () => {
                                                                     {showOptions[comment.identifier] && (
                                                                         <div className="absolute right-0 top-full mb-1 w-32 py-2 bg-white rounded-lg shadow-xl">
                                                                             <button
-                                                                                className="textColorCompat block w-full px-4 py-2 text-xs text-left hover:bg-gray-100"
+                                                                                className="textColorCompat hover-bg-compat block w-full px-4 py-2 text-xs text-left flex items-center"
                                                                                 onClick={() => {
                                                                                     onDeleteComment(comment.identifier);
                                                                                     setShowOptions({});
                                                                                 }}
                                                                             >
-                                                                                삭제
+                                                                                <FaTrash className="mr-2" /> Delete
                                                                             </button>
                                                                         </div>
                                                                     )}
