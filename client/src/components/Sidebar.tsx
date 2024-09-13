@@ -28,7 +28,7 @@ const Sidebar = ({ sub }: Props) => {
     };
 
     return (
-    <div className='hidden w-4/12 ml-3 md:block'>
+    <div className='sidebar hidden w-4/12 ml-3 md:block'>
             <div className='bg-gray-100 border rounded'>
                 <div className='p-3'>
                     <p className='mb-1 text-base'>{sub?.description}</p>

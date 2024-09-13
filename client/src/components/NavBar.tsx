@@ -3,11 +3,28 @@ import Link from "next/link"
 import { useAuthDispatch, useAuthState } from "../context/auth";
 import axios from "axios";
 import Image from "next/image";
-import { FaSearch } from "react-icons/fa";
+import { FaSearch, FaMoon, FaSun } from "react-icons/fa";
 import Login from '../pages/login';
 import Register from '../pages/register';
+import styled from 'styled-components';
 
-const NavBar: React.FC = () => {
+const ToggleButton = styled.button`
+  background: transparent;
+  color: ${({ theme }) => theme.text};
+  padding: 8px;
+  border-radius: 50%;
+  margin-right: 10px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.background};
+  }
+`;
+
+const NavBar: React.FC<{ toggleTheme: () => void, theme: string }> = ({ toggleTheme, theme }) => {
   const { loading, authenticated } = useAuthState();
   const dispatch = useAuthDispatch();
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -52,7 +69,7 @@ const NavBar: React.FC = () => {
           </Link>
         </span>
 
-        <div className="max-w-full px-4">
+        <div className="searchbar max-w-full px-4">
           <div className="relative flex items-center bg-gray-100 border rounded hover:border-gray-700 hover:bg-white">
             <FaSearch className="ml-2 text-gray-400" />
             <input
@@ -63,7 +80,10 @@ const NavBar: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex">
+        <div className="flex items-center">
+          <ToggleButton onClick={toggleTheme}>
+            {theme === "light" ? <FaMoon /> : <FaSun />}
+          </ToggleButton>
           {!loading &&
             (authenticated ? (
               <button
