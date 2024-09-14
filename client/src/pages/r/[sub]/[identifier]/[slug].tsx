@@ -301,7 +301,7 @@ const PostPage = () => {
                                                 </button>
                                             </div>
                                             {aiResponse && (
-                                                <div className="mt-4 p-4 bg-gray-100 rounded-md mr-8">
+                                                <div className="mt-4 p-4 bg-compat rounded-md mr-8">
                                                     <p className="text-sm">{formatAIResponse(aiResponse)}</p>
                                                 </div>
                                             )}
@@ -318,7 +318,7 @@ const PostPage = () => {
                                                         <form onSubmit={handleSubmit}>
                                                             <textarea
                                                                 placeholder="Add a comment"
-                                                                className="w-full p-3 text-black border border-gray-300 rounded focus:outline-none focus:border-gray-600"
+                                                                className="w-full p-3 bg-comment-compat border border-gray-300 rounded focus:outline-none focus:border-gray-600"
                                                                 onChange={e => setNewComment(e.target.value)}
                                                                 value={newComment}
                                                             >
