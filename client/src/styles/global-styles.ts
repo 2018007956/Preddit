@@ -16,6 +16,12 @@ export const GlobalStyles = createGlobalStyle`
         color: #C7C8CC;
       }
     }
+    .bg-compat {
+      background-color: #374151;
+    }
+    .bg-comment-compat {
+      background-color: #374151;
+    }
     .hover-bg-compat:hover {
       background-color: #1F2937;
     }
@@ -48,7 +54,12 @@ export const GlobalStyles = createGlobalStyle`
   .light {
     background-color: #f7fafc;
     color: #1a202c;
-
+    .bg-compat {
+      background-color: #F3F4F6;
+    }
+    .bg-comment-compat {
+      background-color: #f7fafc;
+    }
     .hover-bg-compat:hover {
       background-color: #edf2f7;
     }
