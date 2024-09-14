@@ -35,7 +35,7 @@ const SubCreate = () => {
                 </p>
                 <hr />
                 <form onSubmit={handleSubmit}>
-                    <div className="my-6">
+                    <div className="my-6 text-black">
                         <InputGroup
                             placeholder="Community name"
                             value={name}
@@ -43,7 +43,7 @@ const SubCreate = () => {
                             error={errors.name}
                         />
                     </div>
-                    <div className="my-6">
+                    <div className="my-6 text-black">
                         <InputGroup
                             placeholder="Description"
                             value={description}

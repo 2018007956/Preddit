@@ -36,7 +36,7 @@ const PostCreate = () => {
                     <div className='relative mb-2'>
                         <input
                             type="text"
-                            className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
+                            className="w-full px-3 py-2 text-black border border-gray-300 rounded focus:outline-none focus:border-blue-500"
                             placeholder="Title"
                             maxLength={20}
                             value={title}
@@ -52,7 +52,7 @@ const PostCreate = () => {
                     <textarea
                         rows={4}
                         placeholder="Body"
-                        className='w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-blue-500'
+                        className='w-full p-3 text-black border border-gray-300 rounded focus:outline-none focus:border-blue-500'
                         value={body}
                         onChange={(e) => setBody(e.target.value)}
                     />
