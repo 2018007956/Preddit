@@ -29,14 +29,14 @@ const PostCreate = () => {
     }
     
     return (
-        <div className='flex flex-col pl-72 pt-24'>
-            <div className='md:w-96 p-4 bg-white rounded border border-gray-300'>
+        <div className='flex flex-col pl-60 pt-20'>
+            <div className='md:w-96 md:w-[35rem] p-4 bg-white rounded border border-gray-300'>
                 <h1 className='font-bold mb-3 text-lg'>Create post</h1>
                 <form onSubmit={submitPost}>
                     <div className='relative mb-2'>
                         <input
                             type="text"
-                            className="w-full px-3 py-2 text-black border border-gray-300 rounded focus:outline-none focus:border-blue-500"
+                            className="w-full px-3 py-2 text-black text-sm border border-gray-300 rounded focus:outline-none focus:border-blue-500"
                             placeholder="Title"
                             maxLength={20}
                             value={title}
@@ -50,9 +50,9 @@ const PostCreate = () => {
                         </div>
                     </div>
                     <textarea
-                        rows={4}
+                        rows={10}
                         placeholder="Body"
-                        className='w-full p-3 text-black border border-gray-300 rounded focus:outline-none focus:border-blue-500'
+                        className='w-full p-3 text-black text-sm border border-gray-300 rounded focus:outline-none focus:border-blue-500'
                         value={body}
                         onChange={(e) => setBody(e.target.value)}
                     />

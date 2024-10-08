@@ -38,7 +38,7 @@ export default function MainSidebar() {
                   height={24}
                 />
                 <span className='ml-2 text-sm font-medium'>
-                  r/{sub.name}
+                  {sub.name}
                 </span>
               </Link>
             </div>

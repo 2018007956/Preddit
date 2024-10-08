@@ -54,7 +54,7 @@ const Sidebar = ({ sub }: Props) => {
                                     type="text"
                                     value={editedDescription}
                                     onChange={(e) => setEditedDescription(e.target.value)}
-                                    className="flex-grow p-1 text-base border rounded"
+                                    className="flex-grow p-1 text-black text-base border rounded"
                                 />
                                 <button onClick={handleEdit} className="ml-2 text-green-500">
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">

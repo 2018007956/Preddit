@@ -74,7 +74,7 @@ const PostPage = () => {
         }
     };
 
-    const formatAIResponse = (text: string) => {
+    const textFormat = (text: string) => {
         return text.trimEnd().split('\n').map((line, index) => (
           <React.Fragment key={index}>
             {line.split(/(\*\*.*?\*\*)/).map((part, i) => 
@@ -290,7 +290,7 @@ const PostPage = () => {
                                             <Link href={post.url}>
                                                 <span className="my-1 text-lg font-medium">{post.title}</span>
                                             </Link>
-                                            {post.body && <p className="my-1 text-sm">{post.body}</p>}
+                                            {post.body && <p className="my-1 text-sm">{textFormat(post.body)}</p>}
                                             <div className="mt-2 mb-4 flex justify-end">
                                                 <button
                                                     className="px-3 py-1.5 text-sm font-medium text-white bg-orange-500 rounded-md hover:bg-orange-600 mr-4"
@@ -302,7 +302,7 @@ const PostPage = () => {
                                             </div>
                                             {aiResponse && (
                                                 <div className="mt-4 p-4 bg-compat rounded-md mr-8">
-                                                    <p className="text-sm">{formatAIResponse(aiResponse)}</p>
+                                                    <p className="text-sm">{textFormat(aiResponse)}</p>
                                                 </div>
                                             )}
                                             <div className="flex">
@@ -377,18 +377,19 @@ const PostPage = () => {
                                                                 </div>
                                                             )}
                                                         </div>
-                                                        <p className="text-sm mr-6">{comment.body}</p>
+                                                        <p className="text-sm mr-6">{textFormat(comment.body)}</p>
                                                     </div>
                                                 </div>
                                             ))}
                                             {/* 댓글 작성 구간 */}
-                                            <div className="pr-8 mb-2 pl-7">
+                                            <div className="pr-8 mb-2 pl-7 pt-3">
                                                 {authenticated ?
                                                     (<div>
                                                         <form onSubmit={handleSubmit}>
                                                             <textarea
+                                                                rows={3}
                                                                 placeholder="Add a comment"
-                                                                className="w-full p-3 bg-comment-compat border border-gray-300 rounded focus:outline-none focus:border-gray-600"
+                                                                className="w-full p-2 bg-comment-compat text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-gray-600"
                                                                 onChange={e => setNewComment(e.target.value)}
                                                                 value={newComment}
                                                             >
