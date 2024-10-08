@@ -311,50 +311,8 @@ const PostPage = () => {
                                                     <span>{post.commentCount}</span>
                                                 </Link>
                                             </div>
-                                            {/* 댓글 작성 구간 */}
-                                            <div className="pr-8 mb-2 pl-7">
-                                                {authenticated ?
-                                                    (<div>
-                                                        <form onSubmit={handleSubmit}>
-                                                            <textarea
-                                                                placeholder="Add a comment"
-                                                                className="w-full p-3 bg-comment-compat border border-gray-300 rounded focus:outline-none focus:border-gray-600"
-                                                                onChange={e => setNewComment(e.target.value)}
-                                                                value={newComment}
-                                                            >
-                                                            </textarea>
-                                                            <div className="flex justify-end">
-                                                                <button
-                                                                    className="px-3 py-1 text-sm text-white bg-gray-400 rounded-full"
-                                                                    disabled={newComment.trim() === ""}
-                                                                >
-                                                                    Comment
-                                                                </button>
-                                                            </div>
-                                                        </form>
-                                                    </div>)
-                                                    :
-                                                    (<div className="flex items-center justify-between px-2 py-4 border border-gray-200 rounded">
-                                                        <p className="font-semibold text-gray-400">
-                                                            Please sign in to write comments.
-                                                        </p>
-                                                        <>
-                                                            <Login 
-                                                            isOpen={isLoginModalOpen}
-                                                            onClose={closeLoginModal}
-                                                            openRegisterModal={openRegisterModal}
-                                                            />
-                                                            <Register
-                                                            isOpen={isRegisterModalOpen}
-                                                            onClose={closeRegisterModal}
-                                                            openLoginModal={openLoginModal}
-                                                            />
-                                                        </>
-                                                    </div>)
-                                                }
-                                            </div>
                                             {/* 댓글 리스트 부분 */}
-                                            {Array.isArray(comments) && comments?.map(comment => (
+                                            {Array.isArray(comments) && comments?.slice().reverse().map(comment => (
                                                 <div className="flex" key={comment.identifier}>
                                                     {/* 좋아요 싫어요 기능 부분 */}
                                                     <div className="flex-shrink-0 w-10 py-2 text-center rounded-l">
@@ -423,6 +381,48 @@ const PostPage = () => {
                                                     </div>
                                                 </div>
                                             ))}
+                                            {/* 댓글 작성 구간 */}
+                                            <div className="pr-8 mb-2 pl-7">
+                                                {authenticated ?
+                                                    (<div>
+                                                        <form onSubmit={handleSubmit}>
+                                                            <textarea
+                                                                placeholder="Add a comment"
+                                                                className="w-full p-3 bg-comment-compat border border-gray-300 rounded focus:outline-none focus:border-gray-600"
+                                                                onChange={e => setNewComment(e.target.value)}
+                                                                value={newComment}
+                                                            >
+                                                            </textarea>
+                                                            <div className="flex justify-end">
+                                                                <button
+                                                                    className="px-3 py-1 text-sm text-white bg-gray-400 rounded-full"
+                                                                    disabled={newComment.trim() === ""}
+                                                                >
+                                                                    Comment
+                                                                </button>
+                                                            </div>
+                                                        </form>
+                                                    </div>)
+                                                    :
+                                                    (<div className="flex items-center justify-between px-2 py-4 border border-gray-200 rounded">
+                                                        <p className="font-semibold text-gray-400">
+                                                            Please sign in to write comments.
+                                                        </p>
+                                                        <>
+                                                            <Login 
+                                                            isOpen={isLoginModalOpen}
+                                                            onClose={closeLoginModal}
+                                                            openRegisterModal={openRegisterModal}
+                                                            />
+                                                            <Register
+                                                            isOpen={isRegisterModalOpen}
+                                                            onClose={closeRegisterModal}
+                                                            openLoginModal={openLoginModal}
+                                                            />
+                                                        </>
+                                                    </div>)
+                                                }
+                                            </div>
                                         </>
                                     )}
                                 </div>
