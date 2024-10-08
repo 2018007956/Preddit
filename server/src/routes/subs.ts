@@ -147,6 +147,23 @@ const deleteSub = async (req: Request, res: Response) => {
     }
 };
 
+const updateSub = async (req: Request, res: Response) => {
+    const { description } = req.body;
+    const name = req.params.name;
+
+    try {
+        const sub = await Sub.findOneOrFail({ 
+            where: { name },
+        });
+        sub.description = description;
+        await sub.save();
+        return res.json(sub);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: "Something went wrong" });
+    }
+};
+
 const topSubs = async (_: Request, res: Response) => {
     try {
         const imageUrlExp = `COALESCE('${process.env.APP_URL}/images/' || s."imageUrn", 
@@ -251,6 +268,7 @@ const router = Router();
 router.get("/:name", userMiddleware, getSub);
 router.post("/", userMiddleware, authMiddleware, createSub);
 router.delete("/:name", userMiddleware, authMiddleware, deleteSub)
+router.put("/:name", userMiddleware, authMiddleware, updateSub)
 router.get("/sub/topSubs", topSubs);
 router.post("/:name/upload", userMiddleware, authMiddleware, ownSub, upload.single("file"), uploadSubImage);
 export default router;
